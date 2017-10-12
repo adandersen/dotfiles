@@ -1,0 +1,32 @@
+let mapleader = " "
+
+nmap <leader>wh <c-w>h
+nmap <leader>wl <c-w>l
+nmap <leader>wk <c-w>k
+nmap <leader>wj <c-w>j
+
+nmap <leader>wd :action CloseContent<cr>
+nmap <leader>wv :action VimWindowSplitVertical<cr>
+nmap <leader>ws :action VimWindowSplitHorizontal<cr>
+
+nmap <leader>g :action GotoDeclaration<cr>
+nmap <leader>b :action Back<cr>
+nmap <leader>f :action Forward<cr>
+nmap <leader>e :action RecentChangedFiles<cr>
+nmap <leader>Tab :action Switcher<cr>
+
+nmap <leader>t :action GotoFile<cr>
+nmap <leader>c :action GotoClass<cr>
+nmap <leader>ns :action GotoSymbol<cr>
+nmap <leader>nm :action FileStructurePopup<cr>
+nmap <leader>d :action ShowErrorDescription<cr>
+
+set ignorecase
+set smartcase
+set hlsearch
+set scrolloff=2
+set surround
+let hlstate=0
+nnoremap <F4> :if (hlstate == 0) \| nohlsearch \| else \| set hlsearch \| endif \| let hlstate=1-hlstate<cr>
+nnoremap ^ 0
+nnoremap 0 ^
