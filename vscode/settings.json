@@ -25,7 +25,10 @@
     "vim.otherModesKeyBindingsNonRecursive": [
         { "before": ["space", "o"], "after": [], "commands": [{ "command": "editor.action.goToDeclaration", "args": []}]},
         { "before": ["space", "p"], "after": [], "commands": [{ "command": "editor.action.openDeclarationToTheSide", "args": []}]},
-        { "before": ["space", "w", "d"], "after": [], "commands": [{ "command": "workbench.action.closeActiveEditor", "args": []}]}
+        { "before": ["space", "w", "d"], "after": [], "commands": [{ "command": "workbench.action.closeActiveEditor", "args": []}]},
+        { "before": ["space", "w", "h"], "after": [], "commands": [{ "command": "workbench.action.focusPreviousGroup", "args": []}]},
+        { "before": ["space", "w", "l"], "after": [], "commands": [{ "command": "workbench.action.focusNextGroup", "args": []}]},
+        { "before": ["space", "w", "j"], "after": [], "commands": [{ "command": "workbench.action.terminal.focus", "args": []}]}
 	],
     "vim.disableAnnoyingNeovimMessage": true,
     // "vim.enableNeovim": true,
@@ -33,5 +36,5 @@
 	"workbench.colorTheme": "Darcula",
     "workbench.iconTheme": "vs-seti",
     "workbench.activityBar.visible": false,
-    "workbench.statusBar.visible": false,
+    "workbench.statusBar.visible": false
 }
