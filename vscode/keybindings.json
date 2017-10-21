@@ -1,5 +1,13 @@
 // Place your key bindings in this file to overwrite the defaults
 [
+    { 
+        "key": "ctrl+o",
+        "command": "workbench.action.navigateBack"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "workbench.action.navigateForward"
+    },
     { "key": "ctrl+`", "command": "workbench.action.terminal.focus"},
     { "key": "ctrl+`", "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus"},
     { "key": "f6",     "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus" },
