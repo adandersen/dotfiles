@@ -1,0 +1,40 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    { "key": "ctrl+`", "command": "workbench.action.terminal.focus"},
+    { "key": "ctrl+`", "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus"},
+    { "key": "f6",     "command": "workbench.action.focusActiveEditorGroup", "when": "terminalFocus" },
+    { "key": "f6",     "command": "nim.run.file", "when": "editorLangId == 'nim'" },
+    { "key": "ctrl+r", "command": "extension.vim_ctrl+r",
+        "when": "editorTextFocus && vim.active && vim.use<C-r> && !inDebugRepl"
+    },
+    {
+        "key": "ctrl+]", "command": "editor.action.goToDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    {
+        "key": "f12", "command": "-editor.action.goToDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus && !isInEmbeddedEditor"
+    },
+    { "key": "ctrl+w",  "command": "workbench.action.closeActiveEditor" },
+    { "key": "ctrl+f4", "command": "-workbench.action.closeActiveEditor" },
+    { "key": "ctrl+n",  "command": "workbench.action.showAllSymbols" },
+    { "key": "ctrl+n",  "command": "workbench.action.files.newUntitledFile" },
+    { "key": "ctrl+f",                "command": "actions.find" },
+    { "key": "ctrl+f",                "command": "extension.vim_ctrl+f",
+        "when": "editorTextFocus && vim.active && vim.use<C-f> && !inDebugRepl" },
+    { "key": "ctrl+b",                "command": "editor.action.goToDeclaration",
+        "when": "editorHasDefinitionProvider && editorTextFocus" },
+    { "key": "ctrl+b",                "command": "extension.vim_ctrl+b",
+        "when": "editorTextFocus && vim.active && vim.use<C-b> && !inDebugRepl && vim.mode != 'Insert'"
+    },
+    {
+        "key": "shift+f6",
+        "command": "editor.action.changeAll",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+f2",
+        "command": "-editor.action.changeAll",
+        "when": "editorTextFocus && !editorReadonly"
+    }
+]

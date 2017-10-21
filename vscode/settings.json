@@ -1,0 +1,10 @@
+{
+    "vim.disableAnnoyingNeovimMessage": true,
+    "workbench.statusBar.visible": false,
+    "workbench.activityBar.visible": false,
+    "vim.enableNeovim": true,
+    "vim.neovimPath": "c:\\tools\\neovim\\Neovim\\bin\\nvim.exe",
+    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "files.autoSave": "afterDelay",
+    "editor.renderWhitespace": "none"
+}
