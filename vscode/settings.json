@@ -1,10 +1,37 @@
 {
-    "vim.disableAnnoyingNeovimMessage": true,
-    "workbench.statusBar.visible": false,
-    "workbench.activityBar.visible": false,
-    "vim.enableNeovim": true,
-    "vim.neovimPath": "c:\\tools\\neovim\\Neovim\\bin\\nvim.exe",
-    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "css.validate": false,
+    "editor.renderWhitespace": "none",
+	"editor.insertSpaces": true,
     "files.autoSave": "afterDelay",
-    "editor.renderWhitespace": "none"
+    "terminal.external.osxExec": "iTerm.app",
+	"terminal.integrated.shell.osx": "/usr/local/bin/fish",
+    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/jspm_packages": true
+    },
+    "editor.cursorStyle": "block",
+    "editor.fontFamily": "Inconsolata, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 12,
+    "nim.runOutputDirectory": "out/",
+    "path-intellisense.extensionOnImport": true,
+    "vim.insertModeKeyBindings": [
+    {
+        "before": ["f", "d"],
+        "after": ["<Esc>"]
+    }],
+    "vim.leader": " ",
+    "vim.otherModesKeyBindingsNonRecursive": [
+        { "before": ["space", "o"], "after": [], "commands": [{ "command": "editor.action.goToDeclaration", "args": []}]},
+        { "before": ["space", "p"], "after": [], "commands": [{ "command": "editor.action.openDeclarationToTheSide", "args": []}]},
+        { "before": ["space", "w", "d"], "after": [], "commands": [{ "command": "workbench.action.closeActiveEditor", "args": []}]}
+	],
+    "vim.disableAnnoyingNeovimMessage": true,
+    // "vim.enableNeovim": true,
+    // "vim.neovimPath": "c:\\tools\\neovim\\Neovim\\bin\\nvim.exe",
+	"workbench.colorTheme": "Darcula",
+    "workbench.iconTheme": "vs-seti",
+    "workbench.activityBar.visible": false,
+    "workbench.statusBar.visible": false,
 }
