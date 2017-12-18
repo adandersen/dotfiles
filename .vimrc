@@ -1,14 +1,14 @@
-etup for vundle
+"setup for vundle
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim/
+call vundle#begin()
 
 "-------- Begin Plugins
 
 " the vundle package, let vundle autoupdate itself
-Plugin 'gmarik/vundle'
+Plugin 'VundleVim/vundle'
 
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'fugitive.vim'
@@ -22,6 +22,7 @@ Plugin 'FuzzyFinder'
 Plugin 'bling/vim-airline'
 Plugin 'justinmk/vim-sneak'
 
+call vundle#end()
 "-------- End Plugins and vundle setup
 
 " now can turn filetype functionality back on
@@ -40,7 +41,7 @@ set wildmode=longest:full,full
 set wildignore+=tags
 set hlsearch
 set autoindent
-set noexpandtab
+set expandtab
 set tabstop=4
 set shiftwidth=4
 set backupcopy=yes "needed for karma so it doesnt create a new file to save
@@ -130,7 +131,7 @@ endif
 
 " Color scheme
 set background=dark
-colorscheme solarized
+"colorscheme solarized
 highlight NonText guibg=#060606
 highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
