@@ -31,7 +31,7 @@ syntax on
 " Leader
 let mapleader = " "
 
-set guifont=Consolas:h9:cANSI
+"set guifont=Consolas:h9:cANSI
 set ignorecase
 set ruler
 set fileformats=unix,dos,mac
@@ -51,11 +51,11 @@ set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
 
 " Display extra whitespace
-set list listchars=tab:��,trail:�,nbsp:�
+"set list listchars=tab:��,trail:�,nbsp:�
 
 " Plugin configuration
-let g:DeleteTrailingWhitespace_Action = 'delete'
-let g:DeleteTrailingWhitespace = 1
+"let g:DeleteTrailingWhitespace_Action = 'delete'
+"let g:DeleteTrailingWhitespace = 1
 let g:ctrlp_custom_ignore = {
   \ 'dir': '\v[\/]\.(git|hg|svn|pub|testing|util|Servers|.metadata|3rdPartySources|archive|experiment|intellij|pub|scripts|target)$',
   \ 'file': '\v\.(exe|so|dll|jar|jpg|pdf|sublime-project|sublime-workspace)$',
@@ -121,12 +121,12 @@ if has("gui_running")
   set lines=65 columns=230
 else
   " This is console Vim.
-  if exists("+lines")
-    set lines=50
-  endif
-  if exists("+columns")
-    set columns=100
-  endif
+  "if exists("+lines")
+  "  set lines=50
+  "endif
+  "if exists("+columns")
+  "  set columns=100
+  "endif
 endif
 
 " Color scheme
