@@ -8,7 +8,7 @@ call vundle#begin()
 "-------- Begin Plugins
 
 " the vundle package, let vundle autoupdate itself
-Plugin 'VundleVim/vundle'
+Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'fugitive.vim'
@@ -20,7 +20,7 @@ Plugin 'Solarized'
 Plugin 'L9'
 Plugin 'FuzzyFinder'
 Plugin 'bling/vim-airline'
-Plugin 'justinmk/vim-sneak'
+"Plugin 'justinmk/vim-sneak'
 
 call vundle#end()
 "-------- End Plugins and vundle setup
@@ -50,8 +50,22 @@ set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
 
+" yank to clipboard | let yy, D and P work with system clipboard
+" If used in a tmux window, then copying to system clipboard doesnt work
+" You must instead do 'prefix + ]' then 'space' to highlight, 'enter' to copy,
+" then move to another window and 'prefix + ]' in insert mode to paste
+"if has("clipboard")
+"    set clipboard=unnamed " copy to the system clipboard
+
+"  if has("unnamedplus") " X11 support
+"      set clipboard+=unnamedplus
+"  endif
+"ndif
+
+
 " Display extra whitespace
-"set list listchars=tab:��,trail:�,nbsp:�
+set showbreak=↪\ 
+set listchars=tab:»\ ,extends:›,precedes:‹,nbsp:·,trail:·
 
 " Plugin configuration
 "let g:DeleteTrailingWhitespace_Action = 'delete'
@@ -145,5 +159,7 @@ nnoremap <A-q> :q<cr>
 nnoremap <A-w> :w<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 
+au BufWinLeave * mkview " store all marks in a file on exit
+au BufWinEnter * silent loadview " load all marks for a file on load
 au! BufWritePost .vimrc source %
 
