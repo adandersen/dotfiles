@@ -159,7 +159,7 @@ nnoremap <A-q> :q<cr>
 nnoremap <A-w> :w<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 
-au BufWinLeave * mkview " store all marks in a file on exit
-au BufWinEnter * silent loadview " load all marks for a file on load
+au BufWinLeave * mkview " store all marks/folds in a file on exit
+au BufWinEnter * silent loadview " load all marks/folds for a file on load
 au! BufWritePost .vimrc source %
 
