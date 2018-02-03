@@ -42,7 +42,7 @@ gbc() {
 gpm() {
 	if [ "$1" = '-h' ] || [ "$1" = '--help' ] ; then
 		echo "Git Pull Master"
-		echo "	gpm # use this on a non-master branch: 1) checks out master 2) pull 3) deletes the branch currently on" 
+		echo "	gpm # use this on a non-master branch: 1) checks out master 2) pull 3) deletes the branch currently on"
 	else
 		branch=$(git rev-parse --abbrev-ref HEAD)
 		git checkout master
@@ -68,11 +68,11 @@ myIP() {
 }
 alias dc=dcfunc
 
-dclean() { 
-	docker rm -v $(docker ps -a -q -f status=exited); docker rmi $(docker images -f 'dangling=true' -q); 
+dclean() {
+	docker rm -v $(docker ps -a -q -f status=exited); docker rmi $(docker images -f 'dangling=true' -q);
 }
-dstart() { 
-	docker-machine start default; eval $(docker-machine env default); 
+dstart() {
+	docker-machine start default; eval $(docker-machine env default);
 }
 
 alias dstop="docker-machine stop default"
@@ -89,6 +89,18 @@ function color_my_prompt {
     export PS1="$__cur_location $__git_branch_color$__git_branch$__prompt_tail$__last_color "
 }
 color_my_prompt
+
+# set and change java versions
+function setjdk() {
+    if [ $# -ne 0 ]; then
+        removeFromPath '/System/Library/Frameworks/JavaVM.framework/Home/bin'
+        if [ -n "${JAVA_HOME+x}" ]; then
+            removeFromPath $JAVA_HOME
+        fi
+        export JAVA_HOME=`/usr/libexec/java_home -v $@`
+        export PATH=$JAVA_HOME/bin:$PATH
+    fi
+}
 
 # http://rabexc.org/posts/using-ssh-agent
 if [ -z "$SSH_AUTH_SOCK" ] ; then
