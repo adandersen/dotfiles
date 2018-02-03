@@ -90,6 +90,10 @@ function color_my_prompt {
 }
 color_my_prompt
 
+removeFromPath () {
+    export PATH=$(echo $PATH | sed -E -e "s;:$1;;" -e "s;$1:?;;")
+}
+
 # set and change java versions
 function setjdk() {
     if [ $# -ne 0 ]; then
