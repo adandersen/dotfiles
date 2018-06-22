@@ -114,6 +114,10 @@ fi
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
+if [ -f ~/.xmodmaprc ]; then
+    xmodmap ~/.xmodmaprc 
+fi
+
 if [ -f ~/.bash_profile_local ]; then
     source ~/.bash_profile_local
 fi
