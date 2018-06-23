@@ -1,5 +1,7 @@
-! before changing what any modifier is they must be removed
+! this file can only be run once, set a guard to prevent it from being run again
+! before changing any modifier they must be removed from their modifier map
 remove control = Control_L
+remove mod1 = Alt_R
 
 ! Map right alt to control
 keycode 108 = Control_L
@@ -7,15 +9,14 @@ keycode 108 = Control_L
 ! Map caps lock to escape
 keycode 66 = Escape
 
-! add them back? I don't know, seems to work
+! and then add the modifiers back? seems to work
+add mod1 = Alt_R
 add control = Control_L
 
-! keycode 66 = Escape
-! 66 is caps lock
-! 108 is Right alt
-! 9 is Escape
+! Caps_Lock is keycode 66
+! Alt_R is keycode 108
+! Escape is keycode 9
 
-! Using keycode instead of keysym because that seems to be the only way to make this file idempotent
 ! When mapping one modifier to another, xmodmap man says you must first unmap it from its original modifier map so it is not in the two different modifier lists
 ! mod1, lock and control are modifier maps meant for Alt, Caps Lock, and Control modifiers respectively. Run xmodmap to see the maps and which modifiers are bound to them.
 

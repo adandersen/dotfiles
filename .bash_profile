@@ -114,8 +114,9 @@ fi
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
-if [ -f ~/.xmodmaprc ]; then
+if [ -f ~/.xmodmaprc ] && [ -z "${XMODMAP_SET}" ]; then
     xmodmap ~/.xmodmaprc 
+    XMODMAP_SET=true
 fi
 
 if [ -f ~/.bash_profile_local ]; then
