@@ -1,6 +1,6 @@
 ### shortcuts
 alias ll="ls -l --color=auto -1ahX"
-alias ls="ls -GFash"
+alias ls="ls --color=auto -GFash"
 alias src="source ~/.bash_profile"
 alias fr="ag --nogroup --print0 --smart-case --color-line-number \"1;36\" --color-path \"1;30\" --color-match \"1;31\" --ignore-dir tmp"
 alias bp="vim ~/.bash_profile"
@@ -12,6 +12,9 @@ export EDITOR='vim'
 ### emacs shortcuts
 alias e="emacsclient -nw -a ''"
 alias ec="emacsclient -c -n -a ''"
+
+# elixir
+alias iex='rlwrap -a iex'
 
 ### git shortcuts
 alias st='git status'
@@ -113,11 +116,6 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
 fi
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
-
-if [ -f ~/.xmodmaprc ] && [ -z "${XMODMAP_SET}" ]; then
-    xmodmap ~/.xmodmaprc 
-    XMODMAP_SET=true
-fi
 
 if [ -f ~/.bash_profile_local ]; then
     source ~/.bash_profile_local
