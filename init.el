@@ -24,7 +24,9 @@
       lexical-binding t              ; enable lexical-binding for this buffer instead of dynamic binding (extremely slow)
       winner-mode 1                  ; restore previous window arrangements and buffer contents of those windows
       global-auto-revert-mode t      ; auto-sync files when modified on disk
-      electric-pair-mode             ; auto parentheses pairing
+      electric-pair-mode t           ; auto parentheses pairing
+      show-paren-delay 0             ; no delay for highlighting paren in show-paren-mode
+      show-paren-mode 1              ; highlight pairing parentheses with cursor
       )
 
 (require 'package)
