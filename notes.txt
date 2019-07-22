@@ -1,0 +1,17 @@
+Costco membership #111883291640
+
+Information on how linux login dotfiles work
+    http://mywiki.wooledge.org/DotFiles
+
+What .xsession is for and other things (used when .bash_profile is not being executed because of a login manager being used like gdm with fedora when you login instead of using startx to start an x session)
+    https://unix.stackexchange.com/questions/281858/difference-between-xinitrc-xsession-and-xsessionrc
+
+Change keyboard rate and keyboard delay using xset
+    https://unix.stackexchange.com/questions/58651/adjusting-keyboard-sensitivity-in-a-command-line-terminal/216238
+Except if using wayland, then need to set it on gnome directory. Persists across reboots as well:
+    gsettings list-recursively org.gnome.desktop.peripherals.keyboard
+    gsettings set org.gnome.desktop.peripherals.keyboard KEY VALUE
+
+see process tree
+    ps -aef --forest
+

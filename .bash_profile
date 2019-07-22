@@ -1,9 +1,10 @@
 ### shortcuts
 alias ll="ls -l --color=auto -1ahX"
-alias ls="ls -GFash"
+alias ls="ls --color=auto -GFash"
 alias src="source ~/.bash_profile"
 alias fr="ag --nogroup --print0 --smart-case --color-line-number \"1;36\" --color-path \"1;30\" --color-match \"1;31\" --ignore-dir tmp"
 alias bp="vim ~/.bash_profile"
+alias bpl="vim ~/.bash_profile_local"
 
 export KUBE_EDITOR='vim'
 export EDITOR='vim'
@@ -11,6 +12,9 @@ export EDITOR='vim'
 ### emacs shortcuts
 alias e="emacsclient -nw -a ''"
 alias ec="emacsclient -c -n -a ''"
+
+# elixir
+alias iex='rlwrap -a iex'
 
 ### git shortcuts
 alias st='git status'
@@ -20,27 +24,21 @@ alias gb="git checkout -b "
 
 gbc() {
 	if [ "$#" -gt 2 ] ; then
-		for i in `seq 1 $#`;
+        for i in $(seq 1 $#);
 		do
 			branch=${@: $i:1}
 			git checkout -b $branch
-			git commit \""${@: $i:1}"\"
+			git commit --verbose \""${@: $i:1}"\"
 			open $(git push -u origin $branch | grep -o 'https://.*$')
 		done
-	elif [ "$1" = '-h' ] || [ "$1" = '--help' ] ; then
+	elif [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
 		echo "Git Branch Checkout"
 		echo "	gbc branchName commitMessage"
-	else
-		branch=$1
-		message=$2
-		git checkout -b $branch
-		git commit
-		open $(git push -u origin $branch | grep -o 'https://.*$')
 	fi
 }
 
 gpm() {
-	if [ "$1" = '-h' ] || [ "$1" = '--help' ] ; then
+	if [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
 		echo "Git Pull Master"
 		echo "	gpm # use this on a non-master branch: 1) checks out master 2) pull 3) deletes the branch currently on"
 	else
@@ -54,6 +52,7 @@ gpm() {
 myhelp() {
 	gbc -h
 	gpm -h
+    setjdk -h
     echo ""
 	echo "Other Commands: "
 	echo "Show Dependencies: gradle efile-service:dependencies --configuration compile"
@@ -96,7 +95,11 @@ removeFromPath () {
 
 # set and change java versions
 function setjdk() {
-    if [ $# -ne 0 ]; then
+    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+        echo "Set JDK"
+        echo "  setjdk 1.8"
+        echo "  setjdk 9"
+    elif [ $# -ne 0 ]; then
         removeFromPath '/System/Library/Frameworks/JavaVM.framework/Home/bin'
         if [ -n "${JAVA_HOME+x}" ]; then
             removeFromPath $JAVA_HOME
@@ -111,6 +114,8 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
     eval `ssh-agent`
     ssh-add
 fi
+
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
 if [ -f ~/.bash_profile_local ]; then
     source ~/.bash_profile_local

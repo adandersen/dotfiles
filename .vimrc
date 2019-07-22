@@ -10,6 +10,7 @@ call vundle#begin()
 " the vundle package, let vundle autoupdate itself
 Plugin 'VundleVim/Vundle.vim'
 
+Plugin 'elixir-editors/vim-elixir'
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'fugitive.vim'
 Plugin 'Buffergator'
@@ -20,6 +21,7 @@ Plugin 'Solarized'
 Plugin 'L9'
 Plugin 'FuzzyFinder'
 Plugin 'bling/vim-airline'
+Plugin 'ctrlpvim/ctrlp.vim'
 "Plugin 'justinmk/vim-sneak'
 
 call vundle#end()
