@@ -127,6 +127,10 @@
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
+(use-package elisp-slime-nav :ensure t
+  :config
+  (elisp-slime-nav-mode 1))
+
 ;; Edit this config
 (defun edit-emacs-configuration ()
   (interactive)
@@ -137,6 +141,7 @@
   (interactive)
 (switch-to-buffer nil))
 
+;; make copy/cut/paste work with system clipboard
 (cond ((equal system-type 'darwin)
        (progn
 	 (defun paste-from-os ()
@@ -164,7 +169,12 @@
   :config 
   (general-define-key
    "M-x" 'counsel-M-x
-   "M-o" 'ace-window)
+   "M-o" 'ace-window
+   "C-h j" 'elisp-slime-nav-describe-elisp-thing-at-point)
+  (general-define-key
+    :states '(normal)
+   "0"  'evil-first-non-blank
+   "^"  'evil-digit-argument-or-evil-beginning-of-line)
   (general-define-key
    :states '(normal visual emacs)
    "/" 'swiper
@@ -177,7 +187,8 @@
    :states '(normal visual insert emacs)
    "C-c p" 'paste-from-os
    "C-c y" 'copy-to-os
-   "C-c x" 'cut-to-os)
+   "C-c x" 'cut-to-os
+   "C-]"   'elisp-slime-nav-find-elisp-thing-at-point)
   (general-define-key
    :states '(normal visual insert emacs)
    :prefix "SPC"
@@ -244,7 +255,7 @@
 
 
 ;; Theme
-;; (use-package doom-themes :ensure t :config (load-theme 'doom-one t))
+ (use-package doom-themes :ensure t :config (load-theme 'doom-city-lights t))
 
 ;; Emacs key notation to know what to type for a given key -- https://www.emacswiki.org/emacs/EmacsKeyNotation
 
@@ -279,7 +290,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ace-window multi-term doom-themes which-key counsel ivy evil general use-package))))
+    (elisp-slime-nav ace-window multi-term doom-themes which-key counsel ivy evil general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
