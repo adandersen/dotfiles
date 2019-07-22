@@ -123,6 +123,10 @@
   :config
   (global-evil-surround-mode 1))
 
+(use-package ace-window :ensure t
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
 ;; Edit this config
 (defun edit-emacs-configuration ()
   (interactive)
@@ -149,11 +153,18 @@
 	   (copy-to-osx)
 	   (delete-region (region-beginning) (region-end))))))
 
+(defun eval-exp-by-context (p)
+  "If point is on a right parent ) just the previous exp is evaluated. Otherwise it evaluates the outermost exp"
+  (interactive "P")
+  (if (string-equal (buffer-substring-no-properties (point) (+ (point) 1)) ")")
+      (eval-last-sexp p)
+      (eval-defun p)))
 
 (use-package general :ensure t
   :config 
   (general-define-key
-   "M-x" 'counsel-M-x)
+   "M-x" 'counsel-M-x
+   "M-o" 'ace-window)
   (general-define-key
    :states '(normal visual emacs)
    "/" 'swiper
@@ -184,7 +195,7 @@
    "b" '(:ignore t :which-key "Buffers")
    "bb"  'ivy-switch-buffer
 
-   "e" 'eval-last-sexp
+   "e" 'eval-exp-by-context
    
    "g" '(:ignore t :which-key "Code?")
    "gc" 'evilnc-comment-or-uncomment-lines
@@ -218,6 +229,9 @@
    "w/"  'split-window-right
    "w-"  'split-window-below
    "wd"  'delete-window
+   "we"  'ace-delete-window
+   "ws"  'ace-window
+   "wr"  'ace-swap-window
    "wf"  'toggle-frame-fullscreen
    "wm"  'toggle-maximize-window
    ))
@@ -237,6 +251,7 @@
 ;; keymap info -- https://www.masteringemacs.org/article/mastering-key-bindings-emacs
 ;; Keymap ordering preference lookup order from first to last:
 ;;   emulation-mode key map `emulation-mode-map-alists' (e.g. evil mode keybindings)
+;;       > minor-mode-overrides key map `minor-mode-overriding-map-alist' (overrides any minor mode key-maps)
 ;;       > minor-mode key map `minor-mode-map-alist'
 ;;       > local buffer key map `current-local-map' (local buffer key map is generally populated by major-mode bindings)
 ;;       > global map `current-global-map'
@@ -264,7 +279,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (multi-term doom-themes which-key counsel ivy evil general use-package))))
+    (ace-window multi-term doom-themes which-key counsel ivy evil general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
