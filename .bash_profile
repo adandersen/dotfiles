@@ -23,17 +23,19 @@ alias dif="git diff --ignore-space-at-eol -w --word-diff=color" # the ignore-spa
 alias gb="git checkout -b "
 
 gbc() {
-	if [ "$#" -gt 2 ] ; then
-        for i in $(seq 1 $#);
+	if [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
+		echo "Git Branch Checkout"
+		echo "	gbc branchName commitMessage"
+	elif [ "$#" -ge 1 ]; then
+		for i in $(seq 1 $#);
 		do
 			branch=${@: $i:1}
 			git checkout -b $branch
-			git commit --verbose \""${@: $i:1}"\"
-			open $(git push -u origin $branch | grep -o 'https://.*$')
+			echo 'commit'
+			git commit --verbose
+			echo 'pushing'
+			git push -u origin $branch | grep -o 'https://.*$'
 		done
-	elif [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
-		echo "Git Branch Checkout"
-		echo "	gbc branchName commitMessage"
 	fi
 }
 
