@@ -205,6 +205,7 @@
 
    "b" '(:ignore t :which-key "Buffers")
    "bb"  'ivy-switch-buffer
+   "bd" 'kill-buffer
 
    "e" 'eval-exp-by-context
    
