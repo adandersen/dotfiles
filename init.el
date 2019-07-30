@@ -59,6 +59,11 @@
 (tooltip-mode    -1)
 (menu-bar-mode   -1)
 
+;; Theme
+ (use-package doom-themes :ensure t :config (load-theme 'doom-city-lights t))
+
+(use-package helpful :ensure t) ;; gives much more context/information/examples then the built in help
+
 ;; auto-complete/narrowing search frameworks
 (use-package ivy :ensure t) ; narrow completion framework - comes up in a minibuffer by default
 (use-package counsel :ensure t) ; auto-completion framework in buffers
@@ -131,46 +136,18 @@
   :config
   (elisp-slime-nav-mode 1))
 
-;; Edit this config
-(defun edit-emacs-configuration ()
-  (interactive)
-  (find-file "~/.emacs.d/init.el"))
-
-(defun toggle-buffers ()
-  "Interactive version of (switch-to-buffer nil)"
-  (interactive)
-(switch-to-buffer nil))
-
-;; make copy/cut/paste work with system clipboard
-(cond ((equal system-type 'darwin)
-       (progn
-	 (defun paste-from-os ()
-	   (interactive)
-	   (call-process-region (point) (if mark-active (mark) (point)) "pbpaste" t t)
-	   (setq deactive-mark t))
-
-	 (defun copy-to-os ()
-	   (interactive)
-	   (call-process-region (point) (mark) "pbcopy"))
-
-	 (defun cut-to-os ()
-	   (interactive)
-	   (copy-to-osx)
-	   (delete-region (region-beginning) (region-end))))))
-
-(defun eval-exp-by-context (p)
-  "If point is on a right parent ) just the previous exp is evaluated. Otherwise it evaluates the outermost exp"
-  (interactive "P")
-  (if (string-equal (buffer-substring-no-properties (point) (+ (point) 1)) ")")
-      (eval-last-sexp p)
-      (eval-defun p)))
-
 (use-package general :ensure t
   :config 
   (general-define-key
    "M-x" 'counsel-M-x
    "M-o" 'ace-window
-   "C-h j" 'elisp-slime-nav-describe-elisp-thing-at-point)
+   "C-h j" 'elisp-slime-nav-describe-elisp-thing-at-point
+   "C-h f" #'helpful-callable
+   "C-h F" #'helpful-function ;;
+   "C-h v" #'helpful-variable ;; describe variable
+   "C-h k" #'helpful-key
+   "C-h p" #'helpful-at-point ;; figure out the type of symbol and find help for it
+   "C-h C" #'helpful-command) ;; interactive commands
   (general-define-key
     :states '(normal)
    "0"  'evil-first-non-blank
@@ -253,10 +230,39 @@
     (put 'toggle-maximize-window 'toggle (not (get 'toggle-maximize-window 'toggle)))
     (funcall (if (get 'toggle-maximize-window 'toggle) #'delete-other-windows #'winner-undo)))
 
+;; Edit this config
+(defun edit-emacs-configuration ()
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
 
+(defun toggle-buffers ()
+  "Interactive version of (switch-to-buffer nil)"
+  (interactive)
+(switch-to-buffer nil))
 
-;; Theme
- (use-package doom-themes :ensure t :config (load-theme 'doom-city-lights t))
+;; make copy/cut/paste work with system clipboard
+(cond ((equal system-type 'darwin)
+       (progn
+	 (defun paste-from-os ()
+	   (interactive)
+	   (call-process-region (point) (if mark-active (mark) (point)) "pbpaste" t t)
+	   (setq deactive-mark t))
+
+	 (defun copy-to-os ()
+	   (interactive)
+	   (call-process-region (point) (mark) "pbcopy"))
+
+	 (defun cut-to-os ()
+	   (interactive)
+	   (copy-to-osx)
+	   (delete-region (region-beginning) (region-end))))))
+
+(defun eval-exp-by-context (p)
+  "If point is on a right parent ) just the previous exp is evaluated. Otherwise it evaluates the outermost exp"
+  (interactive "P")
+  (if (string-equal (buffer-substring-no-properties (point) (+ (point) 1)) ")")
+      (eval-last-sexp p)
+      (eval-defun p)))
 
 ;; Emacs key notation to know what to type for a given key -- https://www.emacswiki.org/emacs/EmacsKeyNotation
 
@@ -291,7 +297,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (elisp-slime-nav ace-window multi-term doom-themes which-key counsel ivy evil general use-package))))
+    (helpful elisp-slime-nav ace-window multi-term doom-themes which-key counsel ivy evil general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
