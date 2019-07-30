@@ -270,7 +270,7 @@
 	 (defun paste-from-os ()
 	   (interactive)
 	   (call-process-region (point) (if mark-active (mark) (point)) "pbpaste" t t)
-	   (setq deactive-mark t))
+	   (setq deactivate-mark t))
 
 	 (defun copy-to-os ()
 	   (interactive)
@@ -278,7 +278,7 @@
 
 	 (defun cut-to-os ()
 	   (interactive)
-	   (copy-to-osx)
+	   (copy-to-os)
 	   (delete-region (region-beginning) (region-end))))))
 
 (defun eval-exp-by-context (p)
