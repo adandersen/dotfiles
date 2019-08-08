@@ -85,6 +85,13 @@
 (use-package ivy :ensure t) ; narrow completion framework - comes up in a minibuffer by default
 (use-package counsel :ensure t) ; auto-completion framework in buffers
 (use-package swiper :ensure t) ; a use of ivy to narrow down searches in a buffer
+(use-package company :ensure t
+  :config
+  (company-mode t))
+
+
+;; Elixir package
+(use-package alchemist :ensure t)
 
 (use-package which-key :ensure t
   :config
@@ -128,17 +135,19 @@
 
 
 ;; Workspaces
-(use-package perspective
-  :ensure t
+(use-package perspective :ensure t
   :config
   (persp-mode))
-(use-package persp-projectile
-  :ensure t)
+(use-package persp-projectile :ensure t)
+
+;; Tree view
+(use-package treemacs :ensure t)
+(use-package treemacs-evil :ensure t)
+(use-package treemacs-projectile :ensure t)
 
 
 ;; Surround
-(use-package evil-surround
-  :ensure t
+(use-package evil-surround :ensure t
   :config
   (global-evil-surround-mode 1))
 
@@ -154,7 +163,6 @@
   :config
   (elisp-slime-nav-mode 1))
 
-
 ;; keybindings
 (use-package general :ensure t
   :config 
@@ -169,7 +177,8 @@
    "C-h v" #'helpful-variable ;; describe variable
    "C-h k" #'helpful-key
    "C-h p" #'helpful-at-point ;; figure out the type of symbol and find help for it
-   "C-h C" #'helpful-command) ;; interactive commands
+   "C-h C" #'helpful-command
+   "TAB"   #'company-complete) ;; interactive commands
   (general-define-key
     :states '(normal)
    "0"  'evil-first-non-blank
@@ -203,6 +212,7 @@
    "a" '(:ignore t :which-key "Applications")
    "ar" 'ranger
    "ad" 'deer
+   "at" 'treemacs
 
    "b" '(:ignore t :which-key "Buffers")
    "bb"  'ivy-switch-buffer
@@ -312,7 +322,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (evil-collection helpful elisp-slime-nav ace-window multi-term doom-themes which-key counsel ivy evil general use-package))))
+    (company-mode treemacs-projectile elixir-ls treemacs-evil treemacs alchemist alchemy evil-collection helpful elisp-slime-nav ace-window multi-term doom-themes which-key counsel ivy evil general use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
