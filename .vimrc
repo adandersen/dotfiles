@@ -2,7 +2,7 @@
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/bundle/Vundle.vim/
+set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 "-------- Begin Plugins
@@ -10,7 +10,7 @@ call vundle#begin()
 " the vundle package, let vundle autoupdate itself
 Plugin 'VundleVim/Vundle.vim'
 
-Plugin 'elixir-editors/vim-elixir'
+"Plugin 'elixir-editors/vim-elixir'
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'fugitive.vim'
 Plugin 'Buffergator'
@@ -22,6 +22,8 @@ Plugin 'L9'
 Plugin 'FuzzyFinder'
 Plugin 'bling/vim-airline'
 Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'caenrique/nvim-maximize-window-toggle'
+Plugin 'joshdick/onedark.vim'
 "Plugin 'justinmk/vim-sneak'
 
 call vundle#end()
@@ -73,7 +75,7 @@ set listchars=tab:»\ ,extends:›,precedes:‹,nbsp:·,trail:·
 "let g:DeleteTrailingWhitespace_Action = 'delete'
 "let g:DeleteTrailingWhitespace = 1
 let g:ctrlp_custom_ignore = {
-  \ 'dir': '\v[\/]\.(git|hg|svn|pub|testing|util|Servers|.metadata|3rdPartySources|archive|experiment|intellij|pub|scripts|target)$',
+  \ 'dir': '\v[\/]\.(git|hg|svn|pub|testing|util|Servers|.metadata|3rdPartySources|node_modules|build|intellij|pub|scripts|target)$',
   \ 'file': '\v\.(exe|so|dll|jar|jpg|pdf|sublime-project|sublime-workspace)$',
   \ }
 let g:ctrlp_max_files = 0
@@ -109,6 +111,16 @@ endif
 
 " Run commands that require an interactive shell
 nnoremap <Leader>r :RunInInteractiveShell<space>
+nnoremap <Leader>wm :ToggleOnly<Enter>
+nnoremap <Leader>ws :split<Enter>
+nnoremap <Leader>wv :vsplit<Enter>
+nnoremap <Leader>wd :bp\|bd #<Enter>
+nnoremap <Leader>wc :q<Enter>
+nnoremap <Leader>wh <c-w>h
+nnoremap <Leader>wj <c-w>j
+nnoremap <Leader>wk <c-w>k
+nnoremap <Leader>wl <c-w>l
+nnoremap <Leader><Tab> :b#<Enter>
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
@@ -147,7 +159,7 @@ endif
 
 " Color scheme
 set background=dark
-"colorscheme solarized
+colorscheme onedark
 highlight NonText guibg=#060606
 highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
@@ -161,7 +173,15 @@ nnoremap <A-q> :q<cr>
 nnoremap <A-w> :w<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 
-au BufWinLeave * mkview " store all marks/folds in a file on exit
-au BufWinEnter * silent loadview " load all marks/folds for a file on load
-au! BufWritePost .vimrc source %
-
+" https://vi.stackexchange.com/questions/13864/bufwinleave-mkview-with-unnamed-file-error-32
+augroup AutoSaveFolds " prevents auto commands from showing up twice when sourcing the file more than once
+    "the command au! deletes all vimrc auto commands
+    au!  
+    " view files are about 500 bytes  
+    " bufleave but not bufwinleave captures closing 2nd tab  
+    " nested is needed by bufwrite* (if triggered via other autocmd)  
+    " store all marks/folds in a file on exit
+    autocmd BufWinLeave,BufLeave,BufWritePost ?* nested silent! mkview!  
+    " load all marks/folds for a file on load
+    autocmd BufWinEnter ?* silent! loadview
+augroup end
