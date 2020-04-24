@@ -1,11 +1,9 @@
-"setup for vundle
+" ### Begin Vundle setup and Plugins ###
 set nocompatible
 filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-
-"-------- Begin Plugins
 
 " the vundle package, let vundle autoupdate itself
 Plugin 'VundleVim/Vundle.vim'
@@ -24,19 +22,22 @@ Plugin 'bling/vim-airline'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'caenrique/nvim-maximize-window-toggle'
 Plugin 'joshdick/onedark.vim'
+Plugin 'liuchengxu/vim-which-key'
 "Plugin 'justinmk/vim-sneak'
 
 call vundle#end()
-"-------- End Plugins and vundle setup
 
+" ### Settings ###
 " now can turn filetype functionality back on
 filetype plugin indent on
-syntax on
-" Leader
-let mapleader = " "
+" ### End Plugins and vundle setup ###
 
+
+" ### Settings
+syntax on
 "set guifont=Consolas:h9:cANSI
-set ignorecase
+set ignorecase " this doesn't just ignore case in search strings, it ignores case in
+" all vimscript commands as well, AND ignores case in the == equality operator!!
 set ruler
 set fileformats=unix,dos,mac
 set visualbell
@@ -53,6 +54,66 @@ set showcmd       " display incomplete commands
 set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
+set timeoutlen=400 " for which key, so window shows up after this amount of milliseconds
+
+"notes: boolean options vs non-boolean options
+" boolean options are turned on with 'set "name"' and turned off with 'set
+" "noname"'. set "name?" will tell you the value of the option
+" :options will show all options and their current values
+
+" ### End settings
+
+" ### mappings
+let mapleader = " "
+let maplocalleader = "\\"
+
+" Run commands that require an interactive shell
+nnoremap <Leader>r :RunInInteractiveShell<space>
+nnoremap <Leader>wm :ToggleOnly<Enter>
+nnoremap <Leader>ws :split<Enter><c-w>j
+nnoremap <Leader>wS :split<Enter>
+nnoremap <Leader>wv :vsplit<Enter><c-w>l
+nnoremap <Leader>wV :vsplit<Enter>
+nnoremap <Leader>bd :bp\|bd #<Enter>
+nnoremap <Leader>wd :q<Enter>
+nnoremap <Leader>wh <c-w>h
+nnoremap <Leader>wj <c-w>j
+nnoremap <Leader>wk <c-w>k
+nnoremap <Leader>wl <c-w>l
+nnoremap <Leader>lc :tabnew<Enter>
+nnoremap <Leader>ln :tabn<Enter>
+nnoremap <Leader>lp :tabp<Enter>
+" switch to alternate file (the file previously visible in the current
+" window). :buffers to see which one it is.
+nnoremap <Leader><Tab> :b#<Enter>
+nnoremap <leader> :WhichKey '<Space>'<CR>
+nnoremap <localleader> :<c-u>WhichKey  ','<CR>
+
+" t-mux navigation
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+inoremap {<CR> {<CR>}<C-o>O
+nnoremap <A-q> :q<cr>
+nnoremap <A-w> :w<cr>
+nnoremap <leader>ev :tab vsplit $MYVIMRC<cr>
+nnoremap <leader>es :source $MYVIMRC<cr>
+nnoremap 0 ^
+nnoremap ^ 0
+nnoremap ` '
+nnoremap ' `
+nnoremap <Leader>" viw<Esc>a"<Esc>bi"<Esc>
+nnoremap <Leader>' viw<Esc>a'<Esc>bi'<Esc>
+" Wrap selected text in double or single quotes
+" `< move to first visual selection character. `> move to last visual
+" selection character.
+vnoremap <Leader>" <Esc>`<i"<Esc>`>la"<Esc>
+vnoremap <Leader>' <Esc>`<i'<Esc>`>la'<Esc>
+
+" ### End mappings
+
 
 " yank to clipboard | let yy, D and P work with system clipboard
 " If used in a tmux window, then copying to system clipboard doesnt work
@@ -109,19 +170,6 @@ if executable('ag')
   let g:ctrlp_use_caching = 0
 endif
 
-" Run commands that require an interactive shell
-nnoremap <Leader>r :RunInInteractiveShell<space>
-nnoremap <Leader>wm :ToggleOnly<Enter>
-nnoremap <Leader>ws :split<Enter>
-nnoremap <Leader>wv :vsplit<Enter>
-nnoremap <Leader>wd :bp\|bd #<Enter>
-nnoremap <Leader>wc :q<Enter>
-nnoremap <Leader>wh <c-w>h
-nnoremap <Leader>wj <c-w>j
-nnoremap <Leader>wk <c-w>k
-nnoremap <Leader>wl <c-w>l
-nnoremap <Leader><Tab> :b#<Enter>
-
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
 if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
@@ -159,24 +207,16 @@ endif
 
 " Color scheme
 set background=dark
-colorscheme onedark
+colorscheme ron
 highlight NonText guibg=#060606
 highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
-inoremap {<CR> {<CR>}<C-o>O
-nnoremap <A-q> :q<cr>
-nnoremap <A-w> :w<cr>
-nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+" ### Autocommands (i.e. handle vim events)
 
 " https://vi.stackexchange.com/questions/13864/bufwinleave-mkview-with-unnamed-file-error-32
 augroup AutoSaveFolds " prevents auto commands from showing up twice when sourcing the file more than once
     "the command au! deletes all vimrc auto commands
-    au!  
+    au! AutoSaveFolds
     " view files are about 500 bytes  
     " bufleave but not bufwinleave captures closing 2nd tab  
     " nested is needed by bufwrite* (if triggered via other autocmd)  
@@ -185,3 +225,32 @@ augroup AutoSaveFolds " prevents auto commands from showing up twice when sourci
     " load all marks/folds for a file on load
     autocmd BufWinEnter ?* silent! loadview
 augroup end
+
+
+let s:previousTime = strftime("%s")
+let s:timerId = 0
+function! SaveFileTimer(currentTime)
+    let s:timePassed = a:currentTime - s:previousTime
+    if s:timePassed >= 5
+        :write
+        echom "Wrote, Time " . a:currentTime
+    else
+        echom s:timerId
+        if s:timerId > 0
+            echom "timer stopped, id " . s:timerId
+            call timer_stop(s:timerId)
+        endif
+        echom "skipped, Time: " . a:currentTime
+        let s:timerId = timer_start(5000, 'SaveFileTimer')
+    endif
+
+    let s:previousTime = a:currentTime
+endfunction
+"hi a a a a a a 
+
+"augroup AutoSaveFiles
+"    au! AutoSaveFiles
+"    au InsertLeave * call SaveFileTimer(strftime("%s"))
+"    au TextChanged * call SaveFileTimer(strftime("%s"))
+"augroup end
+
