@@ -55,6 +55,10 @@ set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
 set timeoutlen=400 " for which key, so window shows up after this amount of milliseconds
+set splitright " causes verticle splits to split on the right side instead of the left
+
+command! -nargs=* -complete=shellcmd R vnew | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
+command! -nargs=* Src source ~/.vimrc
 
 "notes: boolean options vs non-boolean options
 " boolean options are turned on with 'set "name"' and turned off with 'set
@@ -85,9 +89,14 @@ nnoremap <Leader>ln :tabn<Enter>
 nnoremap <Leader>lp :tabp<Enter>
 " switch to alternate file (the file previously visible in the current
 " window). :buffers to see which one it is.
-nnoremap <Leader><Tab> :b#<Enter>
+nnoremap <silent> <Leader><Tab> :b#<Enter>
 nnoremap <leader> :WhichKey '<Space>'<CR>
 nnoremap <localleader> :<c-u>WhichKey  ','<CR>
+nnoremap <Leader>s :R rg 
+
+
+"let s:window_number
+"nnoremap gf gf | :
 
 " t-mux navigation
 nnoremap <C-j> <C-w>j
