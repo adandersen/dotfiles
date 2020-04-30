@@ -1,20 +1,39 @@
 ### shortcuts
 alias ll="ls -l --color=auto -1ahX"
 alias ls="ls --color=auto -GFash"
-alias src="source ~/.bash_profile"
 alias fr="ag --nogroup --print0 --smart-case --color-line-number \"1;36\" --color-path \"1;30\" --color-match \"1;31\" --ignore-dir tmp"
 alias bp="vim ~/.bash_profile"
 alias bpl="vim ~/.bash_profile_local"
 
+### XDG env vars https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+# I'm mostly using the defaults...
+XDG_CONFIG_HOME=~/.config                   # personal configuration files
+XDG_DATA_HOME=~/.local/share                # personal user data
+XDG_CONFIG_DIRS=/etc/xdg                    # system config search order, XDG_CONFIG_HOME is searched first
+XDG_DATA_DIRS=/usr/local/share:/usr/share   # search order of data, earlier first, XDG_DATA_HOME precedes this
+XDG_CACHE_HOME=~/.cache                     # runtime apps non-essential user data files
+XDG_RUNTIME_DIR=~/.runtime                  # runtime apps non-essential user runtime files. Must be deleted on logout or shutdown/reboot
+
+function src() {
+	source ~/.bash_profile
+	local bpl=~/.bash_profile_local
+	if [ -f $bpl ]; then
+		source $bpl
+	fi
+}
+
 export KUBE_EDITOR='vim'
 export EDITOR='vim'
+# --files: List files that would be searched but do not search
+# --no-ignore: Do not respect .gitignore, etc...
+# --hidden: Search hidden files and folders
+# --follow: Follow symlinks
+# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"' # meant for fuzzy finder in vim
 
 ### emacs shortcuts
 alias e="emacsclient -nw -a ''"
-alias ec="emacsclient -c -n -a ''"
-
-# elixir
-alias iex='rlwrap -a iex'
+alias ec="emacsclient -n -a ''"
 
 ### git shortcuts
 alias st='git status'
@@ -54,18 +73,19 @@ gpm() {
 myhelp() {
 	gbc -h
 	gpm -h
-    setjdk -h
-    echo ""
+	setjdk -h
+	echo ""
 	echo "Other Commands: "
 	echo "Show Dependencies: gradle efile-service:dependencies --configuration compile"
 }
 
 dcfunc() {
 	export MY_LOCAL_IP=$(myIP)
-	docker-compose "$@"
+	sudo docker-compose "$@"
 }
 myIP() {
-	ifconfig en0 inet | grep inet | awk '{print $2}'
+	ifconfig eth0 | grep -m1 inet | awk '{print $2}'
+	#ifconfig en0 inet | grep inet | awk '{print $2}'
 }
 alias dc=dcfunc
 
@@ -114,10 +134,15 @@ function setjdk() {
 # http://rabexc.org/posts/using-ssh-agent
 if [ -z "$SSH_AUTH_SOCK" ] ; then
     eval `ssh-agent`
-    ssh-add
 fi
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
+if [ -f ~/.local/bin/dropbox.py ]; then
+    ~/.local/bin/dropbox.py start > /dev/null
+else
+    echo 'dropbox not installed at ~/.local/bin/dropbox.py, download it, chmod it, and put it there'
+fi
 
 if [ -f ~/.bash_profile_local ]; then
     source ~/.bash_profile_local
