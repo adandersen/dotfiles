@@ -4,6 +4,8 @@ alias ls="ls --color=auto -GFash"
 alias fr="ag --nogroup --print0 --smart-case --color-line-number \"1;36\" --color-path \"1;30\" --color-match \"1;31\" --ignore-dir tmp"
 alias bp="vim ~/.bash_profile"
 alias bpl="vim ~/.bash_profile_local"
+alias tmux="TERM=xterm=256color tmux"
+alias arc="sudo vim ~/.config/awesome/rc.lua"
 
 ### XDG env vars https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 # I'm mostly using the defaults...

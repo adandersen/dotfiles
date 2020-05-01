@@ -1,6 +1,5 @@
 " plug install script
 " curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-syntax enable
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'preservim/nerdtree'
 Plug 'tpope/vim-fugitive'
@@ -52,6 +51,7 @@ nnoremap <A-w> :w<CR>
 nnoremap <Leader>ev :tab vsplit $MYVIMRC<CR>
 nnoremap <Leader>ebp :tab vsplit ~/.bash_profile<CR>
 nnoremap <Leader>ebpl :tab vsplit ~/.bash_profile_local<CR>
+nnoremap <Leader>ea :tab vsplit ~/.config/awesome/rc.lua<CR>
 nnoremap <Leader>es :source $MYVIMRC<CR>
 nnoremap 0 ^
 nnoremap ^ 0
@@ -90,6 +90,7 @@ inoremap <S-Tab> <c-n>
 " boolean options are turned on with 'set "name"' and turned off with 'set
 " "noname"'. set "name?" will tell you the value of the option
 " :options will show all options and their current values
+syntax enable
 set ignorecase " this doesn't just ignore case in search strings, it ignores case in
 " all vimscript commands as well, AND ignores case in the == equality operator!!
 set fileformats=unix,dos,mac
@@ -201,7 +202,6 @@ highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
 " ### Autocommands (i.e. handle vim events)
 
-au!
 " https://vi.stackexchange.com/questions/13864/bufwinleave-mkview-with-unnamed-file-error-32
 augroup AutoSaveFolds " prevents auto commands from showing up twice when sourcing the file more than once
     "the command au! deletes all vimrc auto commands

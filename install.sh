@@ -17,3 +17,7 @@ ln ./.gitconfig ../.gitconfig
 ln ./.tmux.conf ../.tmux.conf
 ln ./.inputrc ../.inputrc
 ln ./.xmodmaprc ../.xmodmaprc
+
+echo "Setup Awesome config"
+mkdir -p ~/.config/awesome
+ln ./.config/awesome/rc.lua ../.config/awesome/rc.lua
