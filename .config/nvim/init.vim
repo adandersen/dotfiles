@@ -52,6 +52,8 @@ nnoremap <Leader>ev :tab vsplit $MYVIMRC<CR>
 nnoremap <Leader>ebp :tab vsplit ~/.bash_profile<CR>
 nnoremap <Leader>ebpl :tab vsplit ~/.bash_profile_local<CR>
 nnoremap <Leader>ea :tab vsplit ~/.config/awesome/rc.lua<CR>
+nnoremap <Leader>et :tab vsplit ~/.config/awesome/defaultCustom.lua<CR>
+nnoremap <Leader>en :tab vsplit ~/Documents/notes.txt<CR>
 nnoremap <Leader>es :source $MYVIMRC<CR>
 nnoremap 0 ^
 nnoremap ^ 0
