@@ -1,5 +1,3 @@
-Costco membership #111883291640
-
 Information on how linux login dotfiles work
     http://mywiki.wooledge.org/DotFiles
 
