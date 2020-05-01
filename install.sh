@@ -21,8 +21,9 @@ ln ./.xmodmaprc ~/.xmodmaprc
 ln ./.xsession ~/.xsession
 
 echo "Setup AwesomeWM config"
-mkdir -p ~/.config
-ln -s ~/.local/dotfiles/.config/awesome ~/.config/awesome
+mkdir -p ~/.config/awesome
+ln ./.config/awesome/rc.lua ~/.config/awesome/rc.lua
+ln ./.config/awesome/defaultCustom.lua ~/.config/awesome/defaultCustom.lua
 
 echo "Setup i3lock-color (lock screen, dependency for betterlockscreen script)"
 sudo apt install pkg-config libpam0g-dev libcairo2-dev libfontconfig1-dev libxcb-composite0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev libxcb-xinerama0-dev libxcb-randr0-dev libxcb-image0-dev libxcb-util-dev libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libjpeg-dev
