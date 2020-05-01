@@ -21,6 +21,9 @@ nmap <leader>e :action RecentChangedFiles<cr>
 nmap <leader>Tab :action Switcher<cr>
 nmap <leader>d :action ToggleDistractionFreeMode<cr>
 
+vmap <leader>q :action QuickEvaluateExpression<cr>
+vmap <leader>e :action EvaluateExpression<cr>
+
 nmap <leader>t :action GotoFile<cr>
 nmap <leader>c :action GotoClass<cr>
 nmap <leader>ns :action GotoSymbol<cr>
@@ -31,7 +34,11 @@ set smartcase
 set hlsearch
 set scrolloff=2
 set surround
+set ideavim # https://github.com/JetBrains/ideavim/blob/master/doc/ideajoin-examples.md
 let hlstate=0
+set nonu
 nnoremap <F4> :if (hlstate == 0) \| nohlsearch \| else \| set hlsearch \| endif \| let hlstate=1-hlstate<cr>
 nnoremap ^ 0
 nnoremap 0 ^
+nnoremap ' `
+nnoremap ` '

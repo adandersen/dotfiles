@@ -19,9 +19,9 @@ ln ./.tmux.conf ../.tmux.conf
 ln ./.inputrc ../.inputrc
 ln ./.xmodmaprc ../.xmodmaprc
 
-echo "Setup Awesome config"
-mkdir -p ~/.config/awesome
-ln ./.config/awesome/rc.lua ../.config/awesome/rc.lua
+echo "Setup AwesomeWM config"
+mkdir -p ~/.config
+ln -s ~/.local/dotfiles/awesome ~/.config/awesome
 
 echo "Setup i3lock-color (lock screen, dependency for betterlockscreen script)"
 sudo apt install pkg-config libpam0g-dev libcairo2-dev libfontconfig1-dev libxcb-composite0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev libxcb-xinerama0-dev libxcb-randr0-dev libxcb-image0-dev libxcb-util-dev libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libjpeg-dev
@@ -34,3 +34,5 @@ git tag -f "git-$(git rev-parse --short HEAD)" # build non-debug version
 autoreconf -i && ./configure && make # build with gnu auto tools
 ln -s ~/.local/i3lock-color/x86_64-pc-linux-gnu/i3lock ~/.local/bin/i3lock # make 3lock available on path
 # TODO: get betterlockscreen to work instead
+
+
