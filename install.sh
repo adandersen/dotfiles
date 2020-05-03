@@ -7,9 +7,25 @@ if [ ! "$(pwd)" == $dotfiles_absolute_path ]; then
     echo "dotfiles directory needs to be in ~/.local/dotfiles to proceed"
     exit
 fi
+NC='\033[0m' # no color
+
+red() {
+    RED='\033[0;31m'
+    echo -e "$RED$1$NC"
+}
+
+lightcyan() {
+    LIGHTCYAN='\033[1;36m'
+    echo -e "$LIGHTCYAN$1$NC"
+}
+
+yellow() {
+    YELLOW='\033[0;33m'
+    echo -e "$YELLOW$1$NC"
+}
 
 linkDotfiles() {
-    echo "Setup dot files, hard linking in $HOME"
+    yellow "Setup dot files, hard linking in $HOME"
     ln -f ./.ideavimrc ~/.ideavimrc
     ln -f ./.bash_profile ~/.bash_profile
     ln -f ./.bashrc ~/.bashrc
@@ -25,32 +41,32 @@ linkDotfiles() {
 
 installAwesomeWM() {
     sudo apt install awesome
-    echo "Setup AwesomeWM config"
+    yellow "Setup AwesomeWM config"
     mkdir -p ~/.config/awesome
     ln -f ./.config/awesome/rc.lua ~/.config/awesome/rc.lua
     ln -f ./.config/awesome/defaultCustom.lua ~/.config/awesome/defaultCustom.lua
-    echo "Cloning AwesomeWM code"
+    yellow "Cloning AwesomeWM code"
     mkdir -p ~/dev/3rdParty
     cd ~/dev/3rdParty
     git clone git@github.com:awesomeWM/awesome.git
 }
 
 installNeovim() {
-    echo "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
+    yellow "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
     mkdir -p ~/.config/nvim
     ln -f ./.config/nvim/init.vim ~/.config/nvim/init.vim
     curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
     echo ""
-    echo "Done setting up neovim!"
-    echo "PlugInstall, don't forget!"
+    lightcyan "Done setting up neovim!"
+    lightcyan "PlugInstall, don't forget!"
     echo ""
 }
 
 installI3lockColor() {
-    echo "Setup i3lock-color (lock screen, dependency for betterlockscreen script)"
-    echo "  Copying i3lock for now, don't have i3lock-color setup"
+    yellow "Setup i3lock-color (lock screen, dependency for betterlockscreen script)"
+    yellow "  Copying i3lock for now, don't have i3lock-color setup"
     # TODO: get betterlockscreen to work instead
     local_bin_absolute_path="$(cd ~/.local/bin && pwd)"
     if [ ! -f "$local_bin_absolute_path/i3lock" ]; then
@@ -69,16 +85,14 @@ installI3lockColor() {
     fi
 }
 
-installRedshift() {
-    echo "Install redshift, bluelight reducer"
-    sudo apt install redshift
-}
-
 installApps() {
     installAwesomeWM
     installNeovim
     installI3lockColor
-    installRedshift
+    yellow "Install redshift, bluelight reducer"
+    sudo apt install redshift
+    echo "Installing ripgrep for neovim fzf searching"
+    yellow apt install ripgrep
 }
 
 
