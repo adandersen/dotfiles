@@ -1,5 +1,6 @@
 source ~/.bashrc
 
+export PATH=~/.local/bin:$PATH
 ### XDG env vars https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 # I'm mostly using the defaults...
 export XDG_CONFIG_HOME=~/.config                   # personal configuration files
