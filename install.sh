@@ -49,4 +49,5 @@ autoreconf -i && ./configure && make # build with gnu auto tools
 ln -s ~/.local/i3lock-color/x86_64-pc-linux-gnu/i3lock ~/.local/bin/i3lock # make 3lock available on path
 # TODO: get betterlockscreen to work instead
 
-
+echo "Install redshift, bluelight reducer"
+sudo apt install redshift
