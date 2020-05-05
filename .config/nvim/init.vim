@@ -7,7 +7,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'
-Plug 'vim-scripts/Buffergator'
 Plug 'vim-scripts/DeleteTrailingWhitespace'
 Plug 'vim-scripts/L9'
 Plug 'terryma/vim-multiple-cursors'

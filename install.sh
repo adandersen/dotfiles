@@ -92,11 +92,20 @@ installNodejs() {
     fi
 }
 
+installLua() {
+    sudo apt install luajit
+    sudo apt install luarocks
+    sudo luarocks install --server=http://luarocks.org/dev lua-lsp # language server protocol for lua
+    sudo luarocks install luacheck
+    sudo luarocks install Formatter
+}
+
 installApps() {
     installAwesomeWM
     installNeovim
     installI3lockColor
     installNodejs
+    installLua
     yellow "Install redshift, bluelight reducer"
     sudo apt install redshift
     echo "Installing ripgrep for neovim fzf searching"
