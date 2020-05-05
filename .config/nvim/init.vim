@@ -41,8 +41,8 @@ nnoremap <Leader>bd :bp\|bd #<Enter>
 nnoremap <Leader>lc :tabnew<Enter>
 nnoremap <Leader>ln :tabn<Enter>
 nnoremap <Leader>lp :tabp<Enter>
-nnoremap <Leader>fo :Files<Enter>
-nnoremap <Leader>s :Find 
+nnoremap <Leader>t :Files<Enter>
+nnoremap <C-p> :Find .<Enter>
 nnoremap <Leader>an :NERDTreeFind<Enter>
 nnoremap <Leader>ab :BuffergatorOpen<Enter>
 nnoremap <Leader>gs :Gstatus<Enter>
@@ -82,19 +82,6 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
-
-" Tab completion
-" will insert tab at beginning of line,
-" will use completion if not at beginning
-"function! InsertTabWrapper()
-"   let col = col('.') - 1
-"   if !col || getline('.')[col - 1] !~ '\k'
-"       return "\<tab>"
-"   else
-"       return "\<c-p>"
-"   endif
-"ndfunction
-"noremap <Tab> <c-r>=InsertTabWrapper()<CR>
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
