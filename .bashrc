@@ -16,6 +16,7 @@ alias brcl="vim ~/.bashrc_local"
 alias arc="vim ~/.config/awesome/rc.lua"
 alias atheme="vim ~/.config/awesome/defaultCustom.lua"
 alias scripts="cd ~/.local/scripts"
+alias swaps="cd ~/.local/share/nvim/swap"
 
 ### application specific aliases
 alias tmux="TERM=xterm-256color tmux"

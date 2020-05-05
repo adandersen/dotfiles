@@ -1,7 +1,11 @@
 " plug install script
-" curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+if empty(glob("~/.local/share/nvim/site/autoload/plug.vim"))
+    curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+endif
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'preservim/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/Buffergator'
 Plug 'vim-scripts/DeleteTrailingWhitespace'
@@ -9,10 +13,12 @@ Plug 'vim-scripts/L9'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'bling/vim-airline'
 Plug 'liuchengxu/vim-which-key'
-Plug 'altercation/vim-colors-solarized'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" not sure how to get simplyfold for python to work...
+Plug 'tmhedberg/simpylfold'
 " if you enable vim-sneak, it replaces s with a custom key so rebind it...
 "Plug 'justinmk/vim-sneak'
-Plug 'junegunn/fzf', { 'dir': '~/.local/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'dir': '~/.local/fzf', 'do': './install --all' } " fuzzy finder
 Plug 'junegunn/fzf.vim'
 "Plug 'ctrlpvim/ctrlp.vim'
 call plug#end()
@@ -35,14 +41,18 @@ nnoremap <Leader>bd :bp\|bd #<Enter>
 nnoremap <Leader>lc :tabnew<Enter>
 nnoremap <Leader>ln :tabn<Enter>
 nnoremap <Leader>lp :tabp<Enter>
-nnoremap <Leader>so :Files<Enter>
-nnoremap <Leader>sf :Find 
+nnoremap <Leader>fo :Files<Enter>
+nnoremap <Leader>s :Find 
+nnoremap <Leader>an :NERDTreeFind<Enter>
+nnoremap <Leader>ab :BuffergatorOpen<Enter>
+nnoremap <Leader>gs :Gstatus<Enter>
+nnoremap <Leader>gb :Gblame<Enter>
 " switch to alternate file (the file previously visible in the current
 " window). :buffers to see which one it is (indicated by # symbol).
 nnoremap <silent> <Leader><Tab> :b#<Enter>
 nnoremap <Leader> :WhichKey '<Space>'<CR>
 nnoremap <LocalLeader> :<c-u>WhichKey  ','<CR>
-nnoremap <Leader>s :R rg 
+"nnoremap <Leader>s :R rg 
 nnoremap zz zzLkkzzrr
 
 inoremap {<CR> {<CR>}<C-o>O
@@ -54,7 +64,7 @@ nnoremap <Leader>ebpl :tab vsplit ~/.bash_profile_local<CR>
 nnoremap <Leader>ea :tab vsplit ~/.config/awesome/rc.lua<CR>
 nnoremap <Leader>et :tab vsplit ~/.config/awesome/defaultCustom.lua<CR>
 nnoremap <Leader>en :tab vsplit ~/Documents/notes.txt<CR>
-nnoremap <Leader>es :source $MYVIMRC<CR>
+nnoremap <Leader>esw :tab vsplit ~/.local/share/nvim/swap<CR>
 nnoremap 0 ^
 nnoremap ^ 0
 nnoremap ` '
@@ -76,22 +86,80 @@ nnoremap <C-l> <C-w>l
 " Tab completion
 " will insert tab at beginning of line,
 " will use completion if not at beginning
-function! InsertTabWrapper()
-    let col = col('.') - 1
-    if !col || getline('.')[col - 1] !~ '\k'
-        return "\<tab>"
-    else
-        return "\<c-p>"
-    endif
-endfunction
-inoremap <Tab> <c-r>=InsertTabWrapper()<CR>
+"function! InsertTabWrapper()
+"   let col = col('.') - 1
+"   if !col || getline('.')[col - 1] !~ '\k'
+"       return "\<tab>"
+"   else
+"       return "\<c-p>"
+"   endif
+"ndfunction
+"noremap <Tab> <c-r>=InsertTabWrapper()<CR>
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 inoremap <S-Tab> <c-n>
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
+" position. Coc only does snippet and additional edit on confirm.
+" <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
+if exists('*complete_info')
+  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+else
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+endif
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <S-F6> <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>=  <Plug>(coc-format-selected)
+nmap <leader>=  <Plug>(coc-format-selected)
 
 " ##### Settings #####
 "notes: boolean options vs non-boolean options
 " boolean options are turned on with 'set "name"' and turned off with 'set
 " "noname"'. set "name?" will tell you the value of the option
 " :options will show all options and their current values
+"
+" enable syntax highlighting and switch on highlighting the last used search pattern.
 syntax enable
 set ignorecase " this doesn't just ignore case in search strings, it ignores case in
 " all vimscript commands as well, AND ignores case in the == equality operator!!
@@ -103,11 +171,26 @@ set expandtab
 set tabstop=4
 set shiftwidth=4
 set autowrite     " Automatically :write before running commands
-set timeoutlen=100 " for which key, so window shows up after this amount of milliseconds
+set timeoutlen=200 " for which key, so window shows up after this amount of milliseconds
 set splitright " causes verticle splits to split on the right side instead of the left
 " Display extra whitespace
 set showbreak=↪\ 
 set listchars=tab:»\ ,extends:›,precedes:‹,nbsp:·,trail:·
+" Give more space for displaying messages.
+set cmdheight=2
+" swap save after this many milliseconds
+set updatetime=300
+" Don't pass messages to |ins-completion-menu|
+set shortmess+=c
+set signcolumn=yes
+
+" Create undo directory
+let s:undoDir="/.config/nvim/undodir"
+if !isdirectory($HOME . s:undoDir)
+    call mkdir($HOME . s:undoDir, "p")
+endif
+set undofile
+set undodir="$HOME . s:undoDir"
 
 " ##### User Commands #####
 " --column: Show column number
@@ -141,6 +224,26 @@ command! -nargs=* Src source $MYVIMRC
 " ##### Plugin configuration #####
 "let g:DeleteTrailingWhitespace_Action = 'delete'
 "let g:DeleteTrailingWhitespace = 1
+let g:NERDTreeDirArrowExpandable = '' " remove arrows in nerd tree
+let g:NERDTreeDirArrowCollapsible = ''
+let NERDTreeQuitOnOpen = 1 " exit nerdtree when entering a file
+let NERDTreeAutoDeleteBuffer = 1 " delete buffer when file is deleted in NerdTree
+let NERDTreeMinimalUI = 1
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "✹",
+    \ "Staged"    : "✚",
+    \ "Untracked" : "✭",
+    \ "Renamed"   : "➜",
+    \ "Unmerged"  : "═",
+    \ "Deleted"   : "✖",
+    \ "Dirty"     : "✗",
+    \ "Clean"     : "✔︎",
+    \ 'Ignored'   : '☒',
+    \ "Unknown"   : "?"
+    \ }
+" auto close tab if only remaining window is NerdTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
 let g:ctrlp_custom_ignore = {
   \ 'dir': '\v[\/]\.(git|hg|svn|pub|testing|util|Servers|.metadata|3rdPartySources|node_modules|build|intellij|pub|scripts|target)$',
   \ 'file': '\v\.(exe|so|dll|jar|jpg|pdf|sublime-project|sublime-workspace)$',
@@ -161,46 +264,15 @@ if executable('rg')
   "let g:ctrlp_use_caching = 0
 endif
 
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
-  syntax on
-endif
-"
-" Put plugins and dictionaries in this dir (also on Windows)
-"let vimDir = '$HOME/.vim'
-"let &runtimepath.=','.vimDir
-
-" Keep undo history across sessions by storing it in a file
-"if has('persistent_undo')
-    "let myUndoDir = expand(vimDir . '/persistent-undo')
-    "" Create dirs
-    "call system('mkdir ' . vimDir)
-    "call system('mkdir ' . myUndoDir)
-    "let &undodir = myUndoDir
-    "set undofile
-"endif
-
-" set width and height of window
-if has("gui_running")
-  " GUI is running or is about to start.
-  " Maximize gvim window (for an alternative on Windows, see simalt below).
-  set lines=65 columns=230
-else
-  " This is console Vim.
-  "if exists("+lines")
-  "  set lines=50
-  "endif
-  "if exists("+columns")
-  "  set columns=100
-  "endif
-endif
-
 " Color scheme
+if empty(glob("~/.config/nvim/colors/lucius.vim"))
+    silent !curl -fLo ~/.config/nvim/colors/lucius.vim --create-dirs https://raw.githubusercontent.com/bag-man/dotfiles/master/lucius.vim
+endif
 set background=dark
-colorscheme ron
-highlight NonText guibg=#060606
-highlight Folded  guibg=#0A0A0A guifg=#9090D0
+colorscheme lucius
+LuciusDarkLowContrast " makes the theme look good
+"highlight NonText guibg=#060606
+"highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
 " ### Autocommands (i.e. handle vim events)
 

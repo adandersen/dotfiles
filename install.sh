@@ -85,10 +85,18 @@ installI3lockColor() {
     fi
 }
 
+installNodejs() {
+    # Install latest nodejs
+    if [ ! -x "$(command -v node)" ]; then
+        curl --fail -LSs https://install-node.now.sh/latest | sh
+    fi
+}
+
 installApps() {
     installAwesomeWM
     installNeovim
     installI3lockColor
+    installNodejs
     yellow "Install redshift, bluelight reducer"
     sudo apt install redshift
     echo "Installing ripgrep for neovim fzf searching"

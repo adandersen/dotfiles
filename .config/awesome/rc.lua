@@ -2,24 +2,33 @@
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
 
+al = {}
 -- Standard awesome library
 local gears = require("gears")
+al.gears = gears
 local awful = require("awful")
+al.awful = awful
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
+al.wibox = wibox
 -- Theme handling library
 local beautiful = require("beautiful")
+al.beautiful = beautiful
 -- Notification library
 local naughty = require("naughty")
+al.naughty = naughty
 local menubar = require("menubar")
+al.menubar = menubar
 local hotkeys_popup = require("awful.hotkeys_popup")
+al.hotkeys_popup = hotkeys_popup
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
 -- Load Debian menu entries
 local debian = require("debian.menu")
+al.debian = debian
 local has_fdo, freedesktop = pcall(require, "freedesktop")
 
 -- {{{ Error handling
@@ -74,8 +83,6 @@ awful.layout.layouts = {
     awful.layout.suit.fair.horizontal,
     awful.layout.suit.spiral,
     awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
     awful.layout.suit.magnifier,
     awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
@@ -91,7 +98,7 @@ myawesomemenu = {
    { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end },
+   { "quit", function() awesome.quit() end }
 }
 
 local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
@@ -119,9 +126,6 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
-
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -187,7 +191,10 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    local tags = { "1", "2", "3", "4", "5", "6", "7", "8", "9" }
+    local l = awful.layout.suit
+    local layouts = { l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile }
+    awful.tag(tags, s, layouts)
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -228,7 +235,6 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
@@ -244,6 +250,65 @@ root.buttons(gears.table.join(
     awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
+
+function al.popen(cmd)
+    local file = io.popen(cmd)
+    local s = file:read("*a") -- *a reads whole file, *l reads one line (default), *n reads a number
+    s = string.gsub(s, "^%s+", "") -- clears beginning white space
+    s = string.gsub(s, "%s+$", "") -- clears ending whitespace (including new line that a* adds to text)
+    s = string.gsub(s, "[\n\r]+", " ") -- deletes intermediate new lines? not sure if want this
+    return s
+end
+al.home = al.popen("echo ~")
+function al.indent(count)
+    s = ""
+    for i = 1, count do
+        s = s.."\t"
+    end
+    return s
+end
+function al.prin(str)
+    local file = io.open(al.home.."/.awesome_prints", "a+") -- creates new file or (a)ppend (+)at end only
+    file:write(str..'\n')
+    file:close()
+end
+function al.dump(o, depth)
+    if depth == nil then depth = 0 end
+    if depth > 3 or depth == -1 then return tostring(0) end
+    if o == _G then depth = -2 end
+    if type(o) == "table" then
+        local s = "\n"..al.indent(depth-1).."{ \n"
+        for k,v in pairs(o) do
+            if type(k) ~= "userdata" and type(k) ~= "screen" then
+                if type(k) ~= "number" then k = '"'..k..'"' end
+                s = s..al.indent(depth)..k.." = "..al.dump(v, depth + 1)..",\n"
+            end
+        end
+        return s.."\n"..al.indent(depth-1).."}"
+    else
+        return tostring(o)
+    end
+end
+function al.dump_keys(o)
+    if type(o) ~= "userdata" then
+        if type(o) == "table" then
+            local s = "\n{ \n"
+            for k,v in pairs(o) do
+                if type(k) ~= "number" then k = '"'..k..'"' end
+                s = s..k..",\n"
+            end
+            return s.."\n}"
+        else
+            return tostring(o)
+        end
+    end
+end
+function al.eval(str)
+    local success, val = pcall(assert(load("return "..str)))
+    if not val then val = "nil" end
+    if type(val) == "table" then val = al.dump(val, 0) end
+    return success, val
+end
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
@@ -337,7 +402,13 @@ globalkeys = gears.table.join(
                   awful.prompt.run {
                     prompt       = "Run Lua code: ",
                     textbox      = awful.screen.focused().mypromptbox.widget,
-                    exe_callback = awful.util.eval,
+                    exe_callback = function (str)
+                        success, val = al.eval(str)
+                        naughty.notify({ preset = naughty.config.presets.normal,
+                                title = "Lua Output",
+                                text = "Input: "..str.."\nSuccess: "..tostring(success).."\nOutput: "..val,
+                                timeout = 999999})
+                    end,
                     history_path = awful.util.get_cache_dir() .. "/history_eval"
                   }
               end,
@@ -584,12 +655,17 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autorun programs
 -- pgrep to find if the program is already running or not
 apps = {
-	"nm-applet",  	-- nm-applet is the wireless widget in the top right that controls network-manager
-	"redshift" 	-- redshift changes screen temp to eliminate blue light
+    "nm-applet",  	-- nm-applet is the wireless widget in the top right that controls network-manager
+    "redshift" 	    -- redshift changes screen temp to eliminate blue light
 }
+gears.debug.print_error("hi")
 function spawn(app)
-	awful.util.spawn_with_shell("pgrep -u $USER -x " .. app .. " > /dev/null || (" .. app .. " &)")
+    awful.util.spawn_with_shell("pgrep -u $USER -x " .. app .. " > /dev/null || (" .. app .. " &)")
 end
 for i = 1, #apps do
-	spawn(apps[i])
+    spawn(apps[i])
 end
+
+-- TODO: get widget to display lua values
+-- TODO: set per monitor dpi using beautiful.xresources.set_dpi(screen[1], 42)
+-- NOTES: have xrandr --dpi 108 for non laptop monitor in bash_profile_local on work machine. Scales awesome menus/borders/icons/font correctly (not cursor for some reason)
