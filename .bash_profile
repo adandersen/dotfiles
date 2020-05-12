@@ -17,7 +17,7 @@ export EDITOR='vim'
 # --hidden: Search hidden files and folders
 # --follow: Follow symlinks
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
-export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"' # meant for fuzzy finder in vim
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.venv/lib64/*" --glob "!.git/*"' # meant for fuzzy finder in vim
 
 if [ -f ~/.local/bin/dropbox.py ]; then
     ~/.local/bin/dropbox.py start > /dev/null

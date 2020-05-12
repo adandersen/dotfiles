@@ -45,6 +45,7 @@ installAwesomeWM() {
     mkdir -p ~/.config/awesome
     ln -f ./.config/awesome/rc.lua ~/.config/awesome/rc.lua
     ln -f ./.config/awesome/defaultCustom.lua ~/.config/awesome/defaultCustom.lua
+    git clone https://github.com/streetturtle/awesome-wm-widgets.git # for battery, cpu indicators etc
     yellow "Cloning AwesomeWM code"
     mkdir -p ~/dev/3rdParty
     cd ~/dev/3rdParty

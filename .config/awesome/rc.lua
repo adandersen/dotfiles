@@ -1,8 +1,74 @@
+-- TODO: set per monitor dpi using beautiful.xresources.set_dpi(screen[1], 42)
+-- TODO: make shortcut to copy all tags on a screen to another screen, maybe tyrannical with dynamic tag management can help here
+-- TODO: find out how to make cursor not so big
+-- NOTES: have xrandr --dpi 108 for non laptop monitor in bash_profile_local on work machine. Scales awesome menus/borders/icons/font correctly (not cursor for some reason)
+
+
 -- If LuaRocks is installed, make sure that packages installed through it are
 -- found (e.g. lgi). If LuaRocks is not installed, do nothing.
 pcall(require, "luarocks.loader")
 
 al = {}
+function al.cmd(cmd)
+    local file = io.popen(cmd)
+    local s = file:read("*a") -- *a reads whole file, *l reads one line (default), *n reads a number
+    s = string.gsub(s, "^%s+", "") -- clears beginning white space
+    s = string.gsub(s, "%s+$", "") -- clears ending whitespace (including new line that a* adds to text)
+    s = string.gsub(s, "[\n\r]+", " ") -- deletes intermediate new lines? not sure if want this
+    return s
+end
+al.home = al.cmd("echo ~")
+function al.indent(count)
+    s = ""
+    for i = 1, count do
+        s = s.."\t"
+    end
+    return s
+end
+function al.prin(str)
+    local file = io.open(al.home.."/.awesome_prints", "a+") -- creates new file or (a)ppend (+)at end only
+    file:write(str..'\n')
+    file:close()
+end
+--@return string
+function al.dump(o, depth)
+    if depth == nil then depth = 0 end
+    if depth > 3 or depth == -1 then return tostring(0) end
+    if o == _G then depth = -2 end
+    if type(o) == "table" then
+        local s = "\n"..al.indent(depth-1).."{ \n"
+        for k,v in pairs(o) do
+            if type(k) ~= "userdata" and type(k) ~= "screen" then
+                if type(k) ~= "number" then k = '"'..k..'"' end
+                s = s..al.indent(depth)..k.." = "..al.dump(v, depth + 1)..",\n"
+            end
+        end
+        return s.."\n"..al.indent(depth-1).."}"
+    else
+        return tostring(o)
+    end
+end
+function al.dump_keys(o)
+    if type(o) ~= "userdata" then
+        if type(o) == "table" then
+            local s = "\n{ \n"
+            for k,v in pairs(o) do
+                if type(k) ~= "number" then k = '"'..k..'"' end
+                s = s..k..",\n"
+            end
+            return s.."\n}"
+        else
+            return tostring(o)
+        end
+    end
+end
+function al.eval(str)
+    local success, val = pcall(assert(load("return "..str)))
+    if not val then val = "nil" end
+    if type(val) == "table" then val = al.dump(val, 0) end
+    return success, val
+end
+
 -- Standard awesome library
 local gears = require("gears")
 al.gears = gears
@@ -61,7 +127,7 @@ end
 beautiful.init("~/.config/awesome/defaultCustom.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "x-terminal-emulator"
+terminal = "kitty"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -70,7 +136,7 @@ editor_cmd = terminal .. " -e " .. editor
 -- If you do not like this or do not have such a key,
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
-modkey = "Mod4"
+modkey = "Mod4" -- aka Super
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -98,6 +164,7 @@ myawesomemenu = {
    { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "restart", awesome.restart },
+   { "suspend", terminal.." -e ".."systemctl suspend" },
    { "quit", function() awesome.quit() end }
 }
 
@@ -120,17 +187,11 @@ else
 end
 
 
-mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
-
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
 -- {{{ Wibar
--- Create a textclock widget
-mytextclock = wibox.widget.textclock()
-
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
@@ -182,6 +243,18 @@ local function set_wallpaper(s)
         gears.wallpaper.maximized(wallpaper, s, true)
     end
 end
+
+-- {{{ Widgets
+local mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
+                                     menu = mymainmenu })
+
+-- Create a textclock widget
+local mytextclock = wibox.widget.textclock()
+battery_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
+--naughty.notify({title = tostring(battery_widget())})
+
+-- }}}
+
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
@@ -236,6 +309,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             wibox.widget.systray(),
+            battery_widget(),
             mytextclock,
             s.mylayoutbox,
         },
@@ -251,69 +325,10 @@ root.buttons(gears.table.join(
 ))
 -- }}}
 
-function al.popen(cmd)
-    local file = io.popen(cmd)
-    local s = file:read("*a") -- *a reads whole file, *l reads one line (default), *n reads a number
-    s = string.gsub(s, "^%s+", "") -- clears beginning white space
-    s = string.gsub(s, "%s+$", "") -- clears ending whitespace (including new line that a* adds to text)
-    s = string.gsub(s, "[\n\r]+", " ") -- deletes intermediate new lines? not sure if want this
-    return s
-end
-al.home = al.popen("echo ~")
-function al.indent(count)
-    s = ""
-    for i = 1, count do
-        s = s.."\t"
-    end
-    return s
-end
-function al.prin(str)
-    local file = io.open(al.home.."/.awesome_prints", "a+") -- creates new file or (a)ppend (+)at end only
-    file:write(str..'\n')
-    file:close()
-end
-function al.dump(o, depth)
-    if depth == nil then depth = 0 end
-    if depth > 3 or depth == -1 then return tostring(0) end
-    if o == _G then depth = -2 end
-    if type(o) == "table" then
-        local s = "\n"..al.indent(depth-1).."{ \n"
-        for k,v in pairs(o) do
-            if type(k) ~= "userdata" and type(k) ~= "screen" then
-                if type(k) ~= "number" then k = '"'..k..'"' end
-                s = s..al.indent(depth)..k.." = "..al.dump(v, depth + 1)..",\n"
-            end
-        end
-        return s.."\n"..al.indent(depth-1).."}"
-    else
-        return tostring(o)
-    end
-end
-function al.dump_keys(o)
-    if type(o) ~= "userdata" then
-        if type(o) == "table" then
-            local s = "\n{ \n"
-            for k,v in pairs(o) do
-                if type(k) ~= "number" then k = '"'..k..'"' end
-                s = s..k..",\n"
-            end
-            return s.."\n}"
-        else
-            return tostring(o)
-        end
-    end
-end
-function al.eval(str)
-    local success, val = pcall(assert(load("return "..str)))
-    if not val then val = "nil" end
-    if type(val) == "table" then val = al.dump(val, 0) end
-    return success, val
-end
-
 -- {{{ Key bindings
 globalkeys = gears.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
-              {description="show help", group="awesome"}),
+              {description="show help", group = "awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
               {description = "view previous", group = "tag"}),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
@@ -397,6 +412,22 @@ globalkeys = gears.table.join(
     awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
 
+    awful.key({ modkey }, "z",
+              function ()
+                  awful.prompt.run {
+                    prompt       = "See Lua global value: ",
+                    textbox      = awful.screen.focused().mypromptbox.widget,
+                    exe_callback = function (str)
+                        success, val = al.eval(str)
+                        naughty.notify({ preset = naughty.config.presets.normal,
+                                title = "Lua Value",
+                                text = "Input: "..str.."\nSuccess: "..tostring(success).."\nOutput: "..val,
+                                timeout = 999999})
+                    end,
+                    history_path = awful.util.get_cache_dir() .. "/history_eval"
+                  }
+              end,
+              {description = "lua execute prompt", group = "awesome"}),
     awful.key({ modkey }, "x",
               function ()
                   awful.prompt.run {
@@ -634,8 +665,8 @@ client.connect_signal("request::titlebars", function(c)
         { -- Right
             awful.titlebar.widget.floatingbutton (c),
             awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
+            --awful.titlebar.widget.stickybutton   (c),
+            --awful.titlebar.widget.ontopbutton    (c),
             awful.titlebar.widget.closebutton    (c),
             layout = wibox.layout.fixed.horizontal()
         },
@@ -658,14 +689,10 @@ apps = {
     "nm-applet",  	-- nm-applet is the wireless widget in the top right that controls network-manager
     "redshift" 	    -- redshift changes screen temp to eliminate blue light
 }
-gears.debug.print_error("hi")
+
 function spawn(app)
     awful.util.spawn_with_shell("pgrep -u $USER -x " .. app .. " > /dev/null || (" .. app .. " &)")
 end
 for i = 1, #apps do
     spawn(apps[i])
 end
-
--- TODO: get widget to display lua values
--- TODO: set per monitor dpi using beautiful.xresources.set_dpi(screen[1], 42)
--- NOTES: have xrandr --dpi 108 for non laptop monitor in bash_profile_local on work machine. Scales awesome menus/borders/icons/font correctly (not cursor for some reason)

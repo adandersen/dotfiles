@@ -1,6 +1,6 @@
 " plug install script
 if empty(glob("~/.local/share/nvim/site/autoload/plug.vim"))
-    curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
                 \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 call plug#begin('~/.local/share/nvim/plugged')
@@ -36,23 +36,42 @@ nnoremap <Leader>wh <c-w>h
 nnoremap <Leader>wj <c-w>j
 nnoremap <Leader>wk <c-w>k
 nnoremap <Leader>wl <c-w>l
-nnoremap <Leader>bd :bp\|bd #<Enter>
+" a :bn is needed since when deleting a buffer it goes to the one
+" previous. Even this won't be perfect since buffers keep their numbers for
+" the life of vim... Theres a work around using the arglist to renumber
+" buffers by putting all open buffers in the arglist, then deleting all open
+" buffers and reopening them off the arg list which will reorder them, but
+" haven't tried it yet.
+nnoremap <Leader>bd :bp\|bd #<Enter>:bn<Enter>
 nnoremap <Leader>lc :tabnew<Enter>
 nnoremap <Leader>ln :tabn<Enter>
 nnoremap <Leader>lp :tabp<Enter>
-nnoremap <Leader>t :Files<Enter>
-nnoremap <C-p> :Find .<Enter>
+nnoremap <Leader>ft :GFiles<Enter>
+" not real grep, uses ripgrep through fzf
+nnoremap <Leader>ff :Grep 
+nnoremap <Leader>bb :Buffers
 nnoremap <Leader>an :NERDTreeFind<Enter>
 nnoremap <Leader>ab :BuffergatorOpen<Enter>
 nnoremap <Leader>gs :Gstatus<Enter>
-nnoremap <Leader>gb :Gblame<Enter>
+nnoremap <Leader>gc :Git commit -v -q<Enter>
+nnoremap <Leader>ga :Git commit -v -q %<Enter>
+nnoremap <Leader>gb :Git blame --date=relative<Enter>
+nnoremap <Leader>gl :Git log<Enter>
+nnoremap <Leader>gd :Gdiffsplit<Enter>
+nnoremap <Leader>ge :Gedit<Enter>
+nnoremap <Leader>gr :Gread<Enter>
+nnoremap <Leader>gp :Ggrep<Enter>
+nnoremap <Leader>gm :Gmove<Enter>
+nnoremap <Leader>gw :Gwrite<Enter>
+nnoremap <Leader>gpl :Git pull<Enter>
 " switch to alternate file (the file previously visible in the current
 " window). :buffers to see which one it is (indicated by # symbol).
 nnoremap <silent> <Leader><Tab> :b#<Enter>
 nnoremap <Leader> :WhichKey '<Space>'<CR>
 nnoremap <LocalLeader> :<c-u>WhichKey  ','<CR>
-"nnoremap <Leader>s :R rg 
-nnoremap zz zzLkkzzrr
+nnoremap <Leader>zz zzLkkzz
+nnoremap <Leader>/ :Lines 
+nnoremap <Leader>// :BLines 
 
 inoremap {<CR> {<CR>}<C-o>O
 nnoremap <A-q> :q<CR>
@@ -68,13 +87,18 @@ nnoremap 0 ^
 nnoremap ^ 0
 nnoremap ` '
 nnoremap ' `
-nnoremap <Leader>" viw<Esc>a"<Esc>bi"<Esc>
+noremap <Leader>" viw<Esc>a"<Esc>bi"<Esc>
 nnoremap <Leader>' viw<Esc>a'<Esc>bi'<Esc>
 " Wrap selected text in double or single quotes
 " `< move to first visual selection character. `> move to last visual
 " selection character.
 vnoremap <Leader>" <Esc>`<i"<Esc>`>la"<Esc>
 vnoremap <Leader>' <Esc>`<i'<Esc>`>la'<Esc>
+
+" <C-i> is equivalent to ctrl-tab
+" doesn't seem possible to map ctrl-shift-tab, so do ctrl-q instead
+nnoremap <silent><C-i> :bn<Enter>
+nnoremap <silent><C-q> :bp<Enter>
 
 " t-mux navigation
 nnoremap <C-j> <C-w>j
@@ -113,13 +137,13 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> <C-]> <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Show documentation in preview window.
+nnoremap <silent> <A-p> :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -128,9 +152,6 @@ function! s:show_documentation()
     call CocAction('doHover')
   endif
 endfunction
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Symbol renaming.
 nmap <S-F6> <Plug>(coc-rename)
@@ -144,6 +165,10 @@ nmap <leader>=  <Plug>(coc-format-selected)
 " boolean options are turned on with 'set "name"' and turned off with 'set
 " "noname"'. set "name?" will tell you the value of the option
 " :options will show all options and their current values
+"
+" setting an option with `let &option = variable' will expand the variable.
+" Just doing `set option = variable' will not expand and just set it to
+" variable
 "
 " enable syntax highlighting and switch on highlighting the last used search pattern.
 syntax enable
@@ -171,12 +196,13 @@ set shortmess+=c
 set signcolumn=yes
 
 " Create undo directory
-let s:undoDir="/.config/nvim/undodir"
-if !isdirectory($HOME . s:undoDir)
-    call mkdir($HOME . s:undoDir, "p")
+let undoDir = globpath($HOME, '.config/nvim/undodir')
+
+if !isdirectory(undoDir)
+    call mkdir(undoDir, "p")
 endif
 set undofile
-set undodir="$HOME . s:undoDir"
+let &undodir=undoDir
 
 " ##### User Commands #####
 " --column: Show column number
@@ -189,7 +215,7 @@ set undodir="$HOME . s:undoDir"
 " --follow: Follow symlinks
 " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 " --color: Search color options
-command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+command! -bang -nargs=* Grep call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.venv/lib64/*" --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
 command! -nargs=* -complete=shellcmd R vnew | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
 command! -nargs=* Src source $MYVIMRC
 
@@ -215,6 +241,7 @@ let g:NERDTreeDirArrowCollapsible = ''
 let NERDTreeQuitOnOpen = 1 " exit nerdtree when entering a file
 let NERDTreeAutoDeleteBuffer = 1 " delete buffer when file is deleted in NerdTree
 let NERDTreeMinimalUI = 1
+let NERDTreeHijackNetrw=1
 let g:NERDTreeIndicatorMapCustom = {
     \ "Modified"  : "✹",
     \ "Staged"    : "✚",
@@ -227,16 +254,14 @@ let g:NERDTreeIndicatorMapCustom = {
     \ 'Ignored'   : '☒',
     \ "Unknown"   : "?"
     \ }
-" auto close tab if only remaining window is NerdTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 let g:ctrlp_custom_ignore = {
-  \ 'dir': '\v[\/]\.(git|hg|svn|pub|testing|util|Servers|.metadata|3rdPartySources|node_modules|build|intellij|pub|scripts|target)$',
+  \ 'dir': '\v[\/]\.(git|hg|svn|pub|testing|util|Servers|.metadata|3rdPartySources|build|intellij|pub|scripts|target)$',
   \ 'file': '\v\.(exe|so|dll|jar|jpg|pdf|sublime-project|sublime-workspace)$',
   \ }
 let g:ctrlp_max_files = 0
 let g:ctrlp_max_depth = 40
-let NERDTreeHijackNetrw=1
+let g:airline_statusline_ontop=0
 
 " Use ripgrep instead https://github.com/BurntSushi/ripgrep
 if executable('rg')
@@ -261,6 +286,17 @@ LuciusDarkLowContrast " makes the theme look good
 "highlight Folded  guibg=#0A0A0A guifg=#9090D0
 
 " ### Autocommands (i.e. handle vim events)
+" auto close tab if only remaining window is NerdTree
+augroup NerdTree
+    au! NerdTree
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+augroup end
+
+" Highlight the symbol and its references when holding the cursor.
+augroup CocGroup
+    au! CocGroup
+    au CursorHold * silent call CocActionAsync('highlight')
+augroup end
 
 " https://vi.stackexchange.com/questions/13864/bufwinleave-mkview-with-unnamed-file-error-32
 augroup AutoSaveFolds " prevents auto commands from showing up twice when sourcing the file more than once
