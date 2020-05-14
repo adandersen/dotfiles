@@ -1,7 +1,23 @@
--- TODO: set per monitor dpi using beautiful.xresources.set_dpi(screen[1], 42)
--- TODO: make shortcut to copy all tags on a screen to another screen, maybe tyrannical with dynamic tag management can help here
--- TODO: find out how to make cursor not so big
--- NOTES: have xrandr --dpi 108 for non laptop monitor in bash_profile_local on work machine. Scales awesome menus/borders/icons/font correctly (not cursor for some reason)
+--[[ TODO's
+    - set per monitor dpi using beautiful.xresources.set_dpi(screen[1], 42)
+    - make shortcut to copy all tags on a screen to another screen, maybe tyrannical with dynamic tag management can help here
+    - find out how to make cursor not so big
+    - get a better handle on how events work in awesomewm
+    - change the ugly icons. Found in /usr/share/awesome/themes/default/titlebar
+--]]
+
+--[[ Configuration notes: 
+    - have xrandr --dpi 108 for non laptop monitor in bash_profile_local on work machine. Scales awesome menus/borders/icons/font correctly (not cursor for some reason)
+--]]
+
+--[[ Function behavior reminders
+    - To better understand a function, download the AwesomeWM source and look at the code directly. The function names are often misleading.
+    - gears.table.join - joins multiple tables, e.g. table 1 and 2 both have {1={a}, 2={b}}, join makes {1={a}, 2={b}, 3={a}, 4={b}}
+    - awful.button are mouse clicks. 1 = left mouse button, 2 = middle mouse button, 3 = right mouse button, 4 = scroll up, 5 = scroll down
+    - awful.key are keyboard presses
+    - wibox is the bar at the top that contains everything (tags, tasks, widgets, etc.)
+    - Mod4 = Super key (windows key), Mod1 = Alt, Control = Control, Shift = Shift (left side are awesome as well as X names)
+--]]
 
 
 -- If LuaRocks is installed, make sure that packages installed through it are
@@ -193,6 +209,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- {{{ Wibar
 -- Create a wibox for each screen and add it
+-- taglist are all the clickable tax boxes
 local taglist_buttons = gears.table.join(
                     awful.button({ }, 1, function(t) t:view_only() end),
                     awful.button({ modkey }, 1, function(t)
@@ -210,6 +227,7 @@ local taglist_buttons = gears.table.join(
                     awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
                 )
 
+-- task list is all the client tabs
 local tasklist_buttons = gears.table.join(
                      awful.button({ }, 1, function (c)
                                               if c == client.focus then
@@ -251,10 +269,10 @@ local mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- Create a textclock widget
 local mytextclock = wibox.widget.textclock()
 battery_widget = require("awesome-wm-widgets.batteryarc-widget.batteryarc")
+volumebar_widget = require("awesome-wm-widgets.volumebar-widget.volumebar")
 --naughty.notify({title = tostring(battery_widget())})
 
 -- }}}
-
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
@@ -264,10 +282,11 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
+    -- warning: don't try changing these with clients open, will screw up and lose your clients from any of the tags not on the first tag and you will have to pkill them.
     local tags = { "1", "2", "3", "4", "5", "6", "7", "8", "9" }
     local l = awful.layout.suit
     local layouts = { l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile }
-    awful.tag(tags, s, layouts)
+    awful.tag(tags, s, layouts) -- create the actual desktops (aka tags) for each screen (a monitor abstraction for X)
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -283,41 +302,60 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons
+        buttons = taglist_buttons -- mouse clicks
     }
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
         filter  = awful.widget.tasklist.filter.currenttags,
-        buttons = tasklist_buttons
+        buttons = tasklist_buttons, -- mouse clicks
+        style = {
+            shape = gears.shape.powerline
+        }
     }
 
-    -- Create the wibox
+    -- Create the wibox (aka widget box)
     s.mywibox = awful.wibar({ position = "top", screen = s })
 
     -- Add widgets to the wibox
+    -- 
+    -- wibox layout explanations. Each "widget" can actually be a collection (table) of widgets. Only 3 widgets or collections is allowedper wibox.layout. One of them can't be in a table apparently, don't know why.
+    -- See https://awesomewm.org/apidoc/documentation/03-declarative-layout.md.html Layouts section
+    -- fixed, each widget gets what it asks for, left aligned
+    -- align, 1st widget is left aligned, 3rd widget is right aligned, 2nd widget expands to take up all space (useful for task list)
     s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        { -- Left widgets
+        {  -- empty layout. The second (middle) one for align takes up all the remaining space. 
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
         },
-        s.mytasklist, -- Middle widget
-        { -- Right widgets
+        layout = wibox.layout.align.horizontal,
+        s.mytasklist, -- Middle widget, since it expands to take up all the space with align layout
+        { -- Right widgets, everything else on the right
             layout = wibox.layout.fixed.horizontal,
+            spacing = 5, -- add pixels of space between widgets
             wibox.widget.systray(),
-            battery_widget(),
+            volumebar_widget({
+                main_color = "#74aeab",
+                mute_color = "#ff0000",
+                width = 80,
+                shape = "hexagon",
+                margins = 12
+            }),
+            battery_widget({
+                main_color = "#74aeab",
+            }),
             mytextclock,
             s.mylayoutbox,
+            --mylauncher, -- the awesome icon used to click to launch apps.
+            s.mytaglist,
+            s.mypromptbox,
         },
     }
 end)
 -- }}}
 
 -- {{{ Mouse bindings
+-- root is the term for the main X window, in awesome it means the desktop itself behind all the windows (on every screen) as well as the "awesome instance" where all the global key bindings live
 root.buttons(gears.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
@@ -638,7 +676,8 @@ end)
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = gears.table.join(
-        awful.button({ }, 1, function()
+        awful.button({ }, 1, function() -- when clicking on a client's title bar
+            naughty.notify({title = c.name})
             c:emit_signal("request::activate", "titlebar", {raise = true})
             awful.mouse.client.move(c)
         end),

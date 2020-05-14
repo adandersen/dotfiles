@@ -15,16 +15,17 @@ local theme = {}
 
 theme.font          = "noto sans 10"
 
-theme.bg_normal     = "#222222"
-theme.bg_focus      = "#535d6c"
-theme.bg_urgent     = "#ff0000"
-theme.bg_minimize   = "#444444"
+theme.bg_normal     = "#093145" -- Darkest Indigo
+theme.bg_focus      = "#008081" -- Teal
+theme.bg_urgent     = "#c31807" -- Thunderbird
+theme.bg_minimize   = "#263238" -- Outer Space
+-- TODO: make minimized icon's fade as well
 theme.bg_systray    = theme.bg_normal
 
-theme.fg_normal     = "#aaaaaa"
-theme.fg_focus      = "#ffffff"
+theme.fg_normal     = "#f2f3f4" -- Lilia
+theme.fg_focus      = "#f2f3f4"
 theme.fg_urgent     = "#ffffff"
-theme.fg_minimize   = "#ffffff"
+theme.fg_minimize   = "#4a5557"
 
 theme.useless_gap   = dpi(6)
 theme.border_width  = dpi(1)
