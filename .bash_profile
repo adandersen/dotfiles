@@ -30,6 +30,10 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
     eval `ssh-agent`
 fi
 
+# map caps lock to esc and right alt to ctrl
+# -r means file exists and is readable
+[ -r ~/.Xmodmap ] && xmodmap ~/.Xmodmap 
+
 if [ -f ~/.bash_profile_local ]; then
     source ~/.bash_profile_local
 fi

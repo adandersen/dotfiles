@@ -34,7 +34,7 @@ linkDotfiles() {
     ln -f ./.inputrc ~/.inputrc
     ln -f ./.Xmodmap ~/.Xmodmap
     ln -f ./.xmodmaprc ~/.xmodmaprc
-    ln -f ./.xsession ~/.xsession
+    #ln -f ./.xsession ~/.xsession
 
     source ~/.bash_profile # source in current terminal
 }

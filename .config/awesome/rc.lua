@@ -289,7 +289,10 @@ awful.screen.connect_for_each_screen(function(s)
     awful.tag(tags, s, layouts) -- create the actual desktops (aka tags) for each screen (a monitor abstraction for X)
 
     -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
+    s.mypromptbox = awful.widget.prompt({
+        fg = '#74aeab', -- text color
+        bg = '#000000'
+    })
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
@@ -677,7 +680,6 @@ client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = gears.table.join(
         awful.button({ }, 1, function() -- when clicking on a client's title bar
-            naughty.notify({title = c.name})
             c:emit_signal("request::activate", "titlebar", {raise = true})
             awful.mouse.client.move(c)
         end),

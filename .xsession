@@ -2,11 +2,11 @@
 # See http://mywiki.wooledge.org/DotFiles in the "X sessions" area and search for gdm.
 
 # -r means file exists and is readable
-[ -r ~/.bash_profile ] && source ~/.bash_profile
+#[ -r ~/.bash_profile ] && source ~/.bash_profile
 
 # set keyboard delay to 150 milliseconds and keyboard rate to 60 something...
 # only works under X, not wayland unfortunately
-xset r rate 150 60
+# xset r rate 150 60
 # run this on gnome under wayland instead
 # gsettings set org.gnome.desktop.peripherals.keyboard repeat-interval 10
 # gsettings set org.gnome.desktop.peripherals.keyboard delay 150

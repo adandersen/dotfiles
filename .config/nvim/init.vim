@@ -201,6 +201,8 @@ set updatetime=300
 " Don't pass messages to |ins-completion-menu|
 set shortmess+=c
 set signcolumn=yes
+" enable mouse for all vim modes (the a)
+set mouse=a
 
 " Create undo directory
 let undoDir = globpath($HOME, '.config/nvim/undodir')
