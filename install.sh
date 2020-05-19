@@ -26,15 +26,15 @@ yellow() {
 
 linkDotfiles() {
     yellow "Setup dot files, hard linking in $HOME"
-    ln -f ./.ideavimrc ~/.ideavimrc
-    ln -f ./.bash_profile ~/.bash_profile
-    ln -f ./.bashrc ~/.bashrc
-    ln -f ./.gitconfig ~/.gitconfig
-    ln -f ./.tmux.conf ~/.tmux.conf
-    ln -f ./.inputrc ~/.inputrc
-    ln -f ./.Xmodmap ~/.Xmodmap
-    ln -f ./.xmodmaprc ~/.xmodmaprc
-    #ln -f ./.xsession ~/.xsession
+    ln -f $dotfiles_absolute_path/.ideavimrc ~/.ideavimrc
+    ln -f $dotfiles_absolute_path/.bash_profile ~/.bash_profile
+    ln -f $dotfiles_absolute_path/.bashrc ~/.bashrc
+    ln -f $dotfiles_absolute_path/.gitconfig ~/.gitconfig
+    ln -f $dotfiles_absolute_path/.tmux.conf ~/.tmux.conf
+    ln -f $dotfiles_absolute_path/.inputrc ~/.inputrc
+    ln -f $dotfiles_absolute_path/.Xmodmap ~/.Xmodmap
+    ln -f $dotfiles_absolute_path/.xmodmaprc ~/.xmodmaprc
+    #ln -f $dotfiles_absolute_path/.xsession ~/.xsession
 
     source ~/.bash_profile # source in current terminal
 }
@@ -43,8 +43,9 @@ installAwesomeWM() {
     sudo apt install awesome
     yellow "Setup AwesomeWM config"
     mkdir -p ~/.config/awesome
-    ln -f ./.config/awesome/rc.lua ~/.config/awesome/rc.lua
-    ln -f ./.config/awesome/defaultCustom.lua ~/.config/awesome/defaultCustom.lua
+    cd ~/.config/awesome
+    ln -f $dotfiles_absolute_path/.config/awesome/rc.lua ~/.config/awesome/rc.lua
+    ln -f $dotfiles_absolute_path/.config/awesome/defaultCustom.lua ~/.config/awesome/defaultCustom.lua
     git clone https://github.com/streetturtle/awesome-wm-widgets.git # for battery, cpu indicators etc
     yellow "Cloning AwesomeWM code"
     mkdir -p ~/dev/3rdParty
@@ -55,7 +56,7 @@ installAwesomeWM() {
 installNeovim() {
     yellow "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
     mkdir -p ~/.config/nvim
-    ln -f ./.config/nvim/init.vim ~/.config/nvim/init.vim
+    ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
     curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
