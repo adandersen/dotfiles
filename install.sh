@@ -38,7 +38,7 @@ linkDotfiles() {
         ln -f $dotfiles_absolute_path/.inputrc ~/.inputrc
         ln -f $dotfiles_absolute_path/.Xmodmap ~/.Xmodmap
         ln -f $dotfiles_absolute_path/.xmodmaprc ~/.xmodmaprc
-        #ln -f $dotfiles_absolute_path/.xsession ~/.xsession
+        ln -f $dotfiles_absolute_path/.xsession ~/.xsession
 
         source ~/.bash_profile # source in current terminal
     fi
