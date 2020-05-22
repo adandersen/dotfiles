@@ -25,10 +25,19 @@ else
     echo 'dropbox not installed at ~/.local/bin/dropbox.py, download it, chmod it, and put it there'
 fi
 
-# http://rabexc.org/posts/using-ssh-agent
-if [ -z "$SSH_AUTH_SOCK" ] ; then
+# https://unix.stackexchange.com/questions/132065/how-do-i-get-ssh-agent-to-work-in-all-terminals
+export SSH_AUTH_SOCK=~/.ssh/ssh-agent.$HOSTNAME.sock
+ssh-add -l 2>/dev/null >/dev/null
+if [ $? -eq 2 ]; then  # $? means return status code of last executed command
+    echo "Starting ssh-agent on socket $SSH_AUTH_SOCK"
+    ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
     eval `ssh-agent`
 fi
+
+# http://rabexc.org/posts/using-ssh-agent
+#if [ -z "$SSH_AUTH_SOCK" ] ; then
+#    eval `ssh-agent`
+#fi
 
 # map caps lock to esc and right alt to ctrl
 # -r means file exists and is readable

@@ -102,6 +102,20 @@ removeFromPath () {
     export PATH=$(echo $PATH | sed -E -e "s;:$1;;" -e "s;$1:?;;")
 }
 
+# Codi
+# Usage: codi [filetype] [filename]
+codi() {
+  local syntax="${1:-lua}"
+  shift
+  vim -c \
+    "let g:startify_disable_at_vimenter = 1 |\
+    set bt=nofile ls=0 noru nonu nornu |\
+    hi ColorColumn ctermbg=NONE |\
+    hi VertSplit ctermbg=NONE |\
+    hi NonText ctermfg=0 |\
+    Codi $syntax" "$@"
+}
+
 # set and change java versions
 function setjdk() {
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then

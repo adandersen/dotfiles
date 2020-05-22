@@ -38,7 +38,8 @@ set scrolloff=2
 set surround
 set ideavim # https://github.com/JetBrains/ideavim/blob/master/doc/ideajoin-examples.md
 let hlstate=0
-set nonu
+set nu # show line number on cursor when using relative line numbers
+set rnu # relative line numbers
 nnoremap <F4> :if (hlstate == 0) \| nohlsearch \| else \| set hlsearch \| endif \| let hlstate=1-hlstate<cr>
 nnoremap ^ 0
 nnoremap 0 ^

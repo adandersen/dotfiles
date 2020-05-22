@@ -181,7 +181,7 @@ myawesomemenu = {
    { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "restart", awesome.restart },
    { "suspend", terminal.." -e ".."systemctl suspend" },
-   { "quit", function() awesome.quit() end }
+   { "logout", function() awesome.quit() end }
 }
 
 local menu_awesome = { "awesome", myawesomemenu, beautiful.awesome_icon }
@@ -277,15 +277,18 @@ volumebar_widget = require("awesome-wm-widgets.volumebar-widget.volumebar")
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+local tagCount = 9
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
     -- warning: don't try changing these with clients open, will screw up and lose your clients from any of the tags not on the first tag and you will have to pkill them.
-    local tags = { "1", "2", "3", "4", "5", "6", "7", "8", "9" }
+    local tags = {}
+    local layouts = {} 
     local l = awful.layout.suit
-    local layouts = { l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile, l.tile }
+    for i = 1, tagCount do table.insert(tags, i)         end
+    for i = 1, tagCount do table.insert(layouts, l.tile) end
     awful.tag(tags, s, layouts) -- create the actual desktops (aka tags) for each screen (a monitor abstraction for X)
 
     -- Create a promptbox for each screen
@@ -323,7 +326,7 @@ awful.screen.connect_for_each_screen(function(s)
 
     -- Add widgets to the wibox
     -- 
-    -- wibox layout explanations. Each "widget" can actually be a collection (table) of widgets. Only 3 widgets or collections is allowedper wibox.layout. One of them can't be in a table apparently, don't know why.
+    -- wibox layout explanations. Each "widget" can actually be a collection (table) of widgets. Only 3 widgets or collections is usable for the align layout. It also seems to be the only layout that auto stretches a collection (the middle one). One of them can't be in a table apparently, don't know why.
     -- See https://awesomewm.org/apidoc/documentation/03-declarative-layout.md.html Layouts section
     -- fixed, each widget gets what it asks for, left aligned
     -- align, 1st widget is left aligned, 3rd widget is right aligned, 2nd widget expands to take up all space (useful for task list)
@@ -436,6 +439,22 @@ globalkeys = gears.table.join(
               {description = "select next", group = "layout"}),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                end,
               {description = "select previous", group = "layout"}),
+    awful.key({ modkey,           }, "i",     function ()   
+        local current_screen = awful.screen.focused()
+        local laptop_screen = screen.primary
+
+        if current_screen.index == screen.primary then
+            ;
+        else
+            -- need to copy all tags to primary screen
+            -- maybe add a copied_from_index property to know where it came from (in case want to sync clients back)
+            for k, tag in ipairs(current_screen.tags) do
+                naughty.notify({title = al.dump(awful.tag.getdata(tag))})
+            end
+        end
+
+    end,
+              {description = "move tags to other screen", group = "layout"}),
 
     awful.key({ modkey, "Control" }, "n",
               function ()
@@ -727,12 +746,15 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Autorun programs
 -- pgrep to find if the program is already running or not
 apps = {
-    "nm-applet",  	-- nm-applet is the wireless widget in the top right that controls network-manager
-    "redshift" 	    -- redshift changes screen temp to eliminate blue light
+    "nm-applet",  	    -- nm-applet is the wireless widget in the top right that controls network-manager
+    "redshift", 	    -- redshift changes screen temp to eliminate blue light
+    redshiftOptions = "-t 6500:3500"
 }
 
 function spawn(app)
-    awful.util.spawn_with_shell("pgrep -u $USER -x " .. app .. " > /dev/null || (" .. app .. " &)")
+    local options = apps[app.."Options"]
+    if options == nil then options = '' end
+    awful.util.spawn_with_shell("pgrep -u $USER -x " .. app .. " > /dev/null || (" .. app .. ' ' .. options .. " &)")
 end
 for i = 1, #apps do
     spawn(apps[i])

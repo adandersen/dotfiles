@@ -13,13 +13,17 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'bling/vim-airline'
 Plug 'liuchengxu/vim-which-key'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'mhinz/vim-signify'
+" live coding in vim. Best used from the command line (see codi command in .bashrc
+Plug 'metakirby5/codi.vim'
 " highlight current word
 Plug 'dominikduda/vim_current_word'
 " TODO: requires configuring to work in lua, add a lua.vim file in
 " after/syntax
 " could also try Plug 'chrisbra/Colorizer'
 Plug 'ap/vim-css-color'
-" not sure how to get simplyfold for python to work...
+Plug 'stefandtw/quickfix-reflector.vim'
+" shows scrolling context window at top of functions/classes
 Plug 'tmhedberg/simpylfold'
 " if you enable vim-sneak, it replaces s with a custom key so rebind it...
 "Plug 'justinmk/vim-sneak'
@@ -51,7 +55,9 @@ nnoremap <Leader>wl <c-w>l
 nnoremap <Leader>bd :bp\|bd #<Enter>
 nnoremap <Leader>lc :tabnew<Enter>
 nnoremap <Leader>ln :tabn<Enter>
+nnoremap ( :tabn<Enter>
 nnoremap <Leader>lp :tabp<Enter>
+nnoremap ) :tabp<Enter>
 nnoremap <Leader>ft :GFiles<Enter>
 " not real grep, uses ripgrep through fzf
 nnoremap <Leader>ff :Grep 
@@ -63,7 +69,7 @@ nnoremap <Leader>gc :Git commit -v -q<Enter>
 nnoremap <Leader>ga :Git commit -v -q %<Enter>
 nnoremap <Leader>gb :Git blame --date=relative<Enter>
 nnoremap <Leader>gl :Git log<Enter>
-nnoremap <Leader>gd :Gdiffsplit<Enter>
+nnoremap <Leader>gd :tab split<Enter>:Gvdiffsplit<Enter>
 nnoremap <Leader>ge :Gedit<Enter>
 nnoremap <Leader>gr :Gread<Enter>
 nnoremap <Leader>gp :Ggrep<Enter>
@@ -80,8 +86,6 @@ nnoremap <Leader>/ :Lines
 nnoremap <Leader>// :BLines 
 
 inoremap {<CR> {<CR>}<C-o>O
-nnoremap <A-q> :q<CR>
-nnoremap <A-w> :w<CR>
 nnoremap <Leader>ev :tab vsplit $MYVIMRC<CR>
 nnoremap <Leader>ebp :tab vsplit ~/.bash_profile<CR>
 nnoremap <Leader>ebpl :tab vsplit ~/.bash_profile_local<CR>
@@ -102,9 +106,10 @@ vnoremap <Leader>" <Esc>`<i"<Esc>`>la"<Esc>
 vnoremap <Leader>' <Esc>`<i'<Esc>`>la'<Esc>
 
 " <C-i> is equivalent to ctrl-tab
-" doesn't seem possible to map ctrl-shift-tab, so do ctrl-q instead
-nnoremap <silent><C-i> :bn<Enter>
-nnoremap <silent><C-q> :bp<Enter>
+" doesn't seem possible to map ctrl-shift-tab, kitty hijacks all ctrl-shift
+" combinations
+nnoremap <silent><C-n> :bn<Enter>
+nnoremap <silent><C-p> :bp<Enter>
 
 " t-mux navigation
 nnoremap <C-j> <C-w>j
@@ -144,7 +149,7 @@ nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
 nmap <silent> <C-]> <Plug>(coc-definition)
-nmap <silent> <MiddleMouse> <Plug>(coc-definition)
+nmap <silent> <MiddleMouse> <LeftMouse><Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
@@ -201,6 +206,8 @@ set updatetime=300
 " Don't pass messages to |ins-completion-menu|
 set shortmess+=c
 set signcolumn=yes
+set number
+set relativenumber
 " enable mouse for all vim modes (the a)
 set mouse=a
 
@@ -302,11 +309,12 @@ augroup NerdTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 augroup end
 
+" Using vim_current_word instead for now as I like it more
 " Highlight the symbol and its references when holding the cursor.
-augroup CocGroup
-    au! CocGroup
-    au CursorHold * silent call CocActionAsync('highlight')
-augroup end
+"augroup CocGroup
+"    au! CocGroup
+"    au CursorHold * silent call CocActionAsync('highlight')
+"augroup end
 
 " https://vi.stackexchange.com/questions/13864/bufwinleave-mkview-with-unnamed-file-error-32
 augroup AutoSaveFolds " prevents auto commands from showing up twice when sourcing the file more than once
@@ -404,3 +412,4 @@ hi def InterestingWord5 guifg=#000000 ctermfg=16 guibg=#ff9eb8 ctermbg=211
 hi def InterestingWord6 guifg=#000000 ctermfg=16 guibg=#ff2c4b ctermbg=195
 
 " }}}
+
