@@ -1,6 +1,9 @@
 #! /bin/bash
 # assumes ubuntu
+mkdir -p ~/.local/dotfiles
+mkdir -p ~/.local/bin
 dotfiles_absolute_path="$(cd ~/.local/dotfiles && pwd)"
+local_bin_absolute_path="$(cd ~/.local/bin && pwd)"
 
 if [ ! "$(pwd)" == $dotfiles_absolute_path ]; then
     echo "currently in $(pwd)"
@@ -40,41 +43,43 @@ linkDotfiles() {
 }
 
 installAwesomeWM() {
-    sudo apt install awesome
-    yellow "Setup AwesomeWM config"
-    mkdir -p ~/.config/awesome
-    cd ~/.config/awesome
-    ln -f $dotfiles_absolute_path/.config/awesome/rc.lua ~/.config/awesome/rc.lua
-    ln -f $dotfiles_absolute_path/.config/awesome/defaultCustom.lua ~/.config/awesome/defaultCustom.lua
-    git clone https://github.com/streetturtle/awesome-wm-widgets.git # for battery, cpu indicators etc
-    yellow "Cloning AwesomeWM code"
-    mkdir -p ~/dev/3rdParty
-    cd ~/dev/3rdParty
-    git clone git@github.com:awesomeWM/awesome.git
+    if [ ! -x "$(command -v awesome)" ]; then
+        sudo apt install awesome
+        yellow "Setup AwesomeWM config"
+        mkdir -p ~/.config/awesome
+        cd ~/.config/awesome
+        ln -f $dotfiles_absolute_path/.config/awesome/rc.lua ~/.config/awesome/rc.lua
+        ln -f $dotfiles_absolute_path/.config/awesome/defaultCustom.lua ~/.config/awesome/defaultCustom.lua
+        git clone https://github.com/streetturtle/awesome-wm-widgets.git # for battery, cpu indicators etc
+        yellow "Cloning AwesomeWM code"
+        mkdir -p ~/dev/3rdParty
+        cd ~/dev/3rdParty
+        git clone git@github.com:awesomeWM/awesome.git
+    fi
 }
 
 installNeovim() {
-    yellow "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
-    mkdir -p ~/.config/nvim
-    ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
-    curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    if [ ! -x "$(command -v nvim)" ]; then
+        yellow "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
+        mkdir -p ~/.config/nvim
+        ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
+        curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-    echo ""
-    lightcyan "Done setting up neovim!"
-    lightcyan "PlugInstall, don't forget!"
-    echo ""
+        echo ""
+        lightcyan "Done setting up neovim!"
+        lightcyan "PlugInstall, don't forget!"
+        echo ""
+    fi
 }
 
 installI3lockColor() {
     yellow "Setup i3lock-color (lock screen, dependency for betterlockscreen script)"
     yellow "  Copying i3lock for now, don't have i3lock-color setup"
     # TODO: get betterlockscreen to work instead
-    local_bin_absolute_path="$(cd ~/.local/bin && pwd)"
     if [ ! -f "$local_bin_absolute_path/i3lock" ]; then
         sudo apt install pkg-config libpam0g-dev libcairo2-dev libfontconfig1-dev libxcb-composite0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev libxcb-xinerama0-dev libxcb-randr0-dev libxcb-image0-dev libxcb-util-dev libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libjpeg-dev autoconf
 
-        mkdir -p ~/.local/bin
         cd ~/.local
         git clone https://github.com/Raymo111/i3lock-color.git
         cd i3lock-color
@@ -95,19 +100,31 @@ installNodejs() {
 }
 
 installLua() {
-    sudo apt install luajit
-    sudo apt install luarocks
-    sudo luarocks install --server=http://luarocks.org/dev lua-lsp # language server protocol for lua
-    sudo luarocks install luacheck
-    sudo luarocks install Formatter
+    if [ ! -x "$(command -v luajit)" ]; then
+        yello "Install luajit"
+        sudo apt install luajit
+        sudo apt install luarocks
+        sudo luarocks install --server=http://luarocks.org/dev lua-lsp # language server protocol for lua
+        sudo luarocks install luacheck
+        sudo luarocks install Formatter
+    fi
+}
+
+installKitty() {
+    if [ ! -x "$(command -v kitty)" ]; then
+        yello "Install kitty, terminal emulator"
+        curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+        ln -s ~/.local/kitty.app/bin/kitty ~/.local/bin/
+    fi
 }
 
 installApps() {
+    installKitty
+    installLua
     installAwesomeWM
     installNeovim
     installI3lockColor
     installNodejs
-    installLua
     yellow "Install redshift, bluelight reducer"
     sudo apt install redshift
     echo "Installing ripgrep for neovim fzf searching"
