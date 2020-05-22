@@ -28,18 +28,20 @@ yellow() {
 }
 
 linkDotfiles() {
-    yellow "Setup dot files, hard linking in $HOME"
-    ln -f $dotfiles_absolute_path/.ideavimrc ~/.ideavimrc
-    ln -f $dotfiles_absolute_path/.bash_profile ~/.bash_profile
-    ln -f $dotfiles_absolute_path/.bashrc ~/.bashrc
-    ln -f $dotfiles_absolute_path/.gitconfig ~/.gitconfig
-    ln -f $dotfiles_absolute_path/.tmux.conf ~/.tmux.conf
-    ln -f $dotfiles_absolute_path/.inputrc ~/.inputrc
-    ln -f $dotfiles_absolute_path/.Xmodmap ~/.Xmodmap
-    ln -f $dotfiles_absolute_path/.xmodmaprc ~/.xmodmaprc
-    #ln -f $dotfiles_absolute_path/.xsession ~/.xsession
+    if [ ! -f ~/.ideavimrc ]; then
+        yellow "Setup dot files, hard linking in $HOME"
+        ln -f $dotfiles_absolute_path/.ideavimrc ~/.ideavimrc
+        ln -f $dotfiles_absolute_path/.bash_profile ~/.bash_profile
+        ln -f $dotfiles_absolute_path/.bashrc ~/.bashrc
+        ln -f $dotfiles_absolute_path/.gitconfig ~/.gitconfig
+        ln -f $dotfiles_absolute_path/.tmux.conf ~/.tmux.conf
+        ln -f $dotfiles_absolute_path/.inputrc ~/.inputrc
+        ln -f $dotfiles_absolute_path/.Xmodmap ~/.Xmodmap
+        ln -f $dotfiles_absolute_path/.xmodmaprc ~/.xmodmaprc
+        #ln -f $dotfiles_absolute_path/.xsession ~/.xsession
 
-    source ~/.bash_profile # source in current terminal
+        source ~/.bash_profile # source in current terminal
+    fi
 }
 
 installAwesomeWM() {
@@ -74,10 +76,10 @@ installNeovim() {
 }
 
 installI3lockColor() {
-    yellow "Setup i3lock-color (lock screen, dependency for betterlockscreen script)"
-    yellow "  Copying i3lock for now, don't have i3lock-color setup"
     # TODO: get betterlockscreen to work instead
     if [ ! -f "$local_bin_absolute_path/i3lock" ]; then
+        yellow "Setup i3lock-color (lock screen, dependency for betterlockscreen script)"
+        yellow "  Copying i3lock for now, don't have i3lock-color setup"
         sudo apt install pkg-config libpam0g-dev libcairo2-dev libfontconfig1-dev libxcb-composite0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev libxcb-xinerama0-dev libxcb-randr0-dev libxcb-image0-dev libxcb-util-dev libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libjpeg-dev autoconf
 
         cd ~/.local
@@ -87,13 +89,10 @@ installI3lockColor() {
         autoreconf -i && ./configure && make # build with gnu auto tools
 
         ln -s ~/.local/i3lock-color/x86_64-pc-linux-gnu/i3lock ~/.local/bin/i3lock # make 3lock available on path
-    else
-        echo "i3lock already exists, not copying"
     fi
 }
 
 installNodejs() {
-    # Install latest nodejs
     if [ ! -x "$(command -v node)" ]; then
         curl --fail -LSs https://install-node.now.sh/latest | sh
     fi
@@ -118,6 +117,17 @@ installKitty() {
     fi
 }
 
+installUtilities() {
+    if [ ! -x "$(command -v redshift)" ]; then
+        yellow "Install redshift, bluelight reducer"
+        sudo apt install redshift
+    fi
+    if [ ! -x "$(command -v rg)" ]; then
+        yellow "Installing ripgrep for neovim fzf searching"
+        sudo apt install ripgrep
+    fi
+}
+
 installApps() {
     installKitty
     installLua
@@ -125,10 +135,7 @@ installApps() {
     installNeovim
     installI3lockColor
     installNodejs
-    yellow "Install redshift, bluelight reducer"
-    sudo apt install redshift
-    echo "Installing ripgrep for neovim fzf searching"
-    yellow apt install ripgrep
+    installUtilities
 }
 
 
