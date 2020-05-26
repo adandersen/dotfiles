@@ -107,6 +107,8 @@ al.hotkeys_popup = hotkeys_popup
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
+local lain = require("lain")
+local xrandr = require("xrandr")
 
 -- Load Debian menu entries
 local debian = require("debian.menu")
@@ -147,6 +149,12 @@ terminal = "kitty"
 editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
+local quake = lain.util.quake {  -- quake like console
+    app = terminal,
+    name = "Q",
+    argname = "--name %s",
+}
+
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
@@ -157,6 +165,12 @@ modkey = "Mod4" -- aka Super
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     awful.layout.suit.floating,
+    lain.layout.centerwork,
+    lain.layout.centerwork.horizontal,
+    lain.layout.termfair,
+    lain.layout.termfair.center,
+    lain.layout.cascade,
+    lain.layout.cascade.tile,
     awful.layout.suit.tile,
     awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
@@ -404,6 +418,8 @@ globalkeys = gears.table.join(
               {description = "focus the next screen", group = "screen"}),
     awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
               {description = "focus the previous screen", group = "screen"}),
+    awful.key({ modkey, "Control" }, "p", function () xrandr.xrandr() end,
+              {description = "Toggle xrandr monitor configurations", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
     awful.key({ modkey,           }, "Tab",
@@ -504,6 +520,8 @@ globalkeys = gears.table.join(
                   }
               end,
               {description = "lua execute prompt", group = "awesome"}),
+    awful.key({ modkey,           }, "`",      function (c) quake:toggle()                   end,
+              {description = "Quake menu", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"})
@@ -533,7 +551,7 @@ clientkeys = gears.table.join(
             c.minimized = true
         end ,
         {description = "minimize", group = "client"}),
-    awful.key({ modkey,           }, "m",
+    awful.key({ modkey, "Shift"   }, "m",
         function (c)
             c.maximized = not c.maximized
             c:raise()
@@ -545,12 +563,17 @@ clientkeys = gears.table.join(
             c:raise()
         end ,
         {description = "(un)maximize vertically", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "m",
-        function (c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c:raise()
-        end ,
-        {description = "(un)maximize horizontally", group = "client"})
+    --awful.key({ modkey, "Shift"   }, "m",
+        --function (c)
+            --c.maximized_horizontal = not c.maximized_horizontal
+            --c:raise()
+        --end ,
+        --{description = "(un)maximize horizontally", group = "client"}),
+    awful.key({ modkey,           }, "m", function(c) 
+        lain.util.magnify_client(c, .5, .5) 
+        c:raise()
+    end,
+        {description = "(un)maximize", group = "client"})
 )
 
 -- Bind all key numbers to tags.
