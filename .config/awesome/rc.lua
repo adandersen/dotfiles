@@ -85,25 +85,21 @@ function al.eval(str)
     return success, val
 end
 
+
+
 -- Standard awesome library
 local gears = require("gears")
-al.gears = gears
 local awful = require("awful")
-al.awful = awful
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
-al.wibox = wibox
 -- Theme handling library
 local beautiful = require("beautiful")
-al.beautiful = beautiful
 -- Notification library
 local naughty = require("naughty")
-al.naughty = naughty
+--require("notifications")
 local menubar = require("menubar")
-al.menubar = menubar
 local hotkeys_popup = require("awful.hotkeys_popup")
-al.hotkeys_popup = hotkeys_popup
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -112,8 +108,15 @@ local xrandr = require("xrandr")
 
 -- Load Debian menu entries
 local debian = require("debian.menu")
-al.debian = debian
 local has_fdo, freedesktop = pcall(require, "freedesktop")
+al.gears = gears
+al.awful = awful
+al.beautiful = beautiful
+al.naughty = naughty
+al.wibox = wibox
+al.menubar = menubar
+al.hotkeys_popup = hotkeys_popup
+al.debian = debian
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -151,8 +154,12 @@ editor_cmd = terminal .. " -e " .. editor
 
 local quake = lain.util.quake {  -- quake like console
     app = terminal,
-    name = "Q",
+    name = "Quake",
     argname = "--name %s",
+    height = 0.5,
+    border = 0,
+    settings = function(c) c.requests_no_titlebar = true end,
+    followtag = true, -- makes it so it will activate on different monitors when a client is focused
 }
 
 -- Default modkey.
@@ -237,8 +244,8 @@ local taglist_buttons = gears.table.join(
                                                   client.focus:toggle_tag(t)
                                               end
                                           end),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+                    awful.button({ }, 4, function(t) awful.tag.viewprev(t.screen) end),
+                    awful.button({ }, 5, function(t) awful.tag.viewnext(t.screen) end)
                 )
 
 -- task list is all the client tabs
@@ -258,10 +265,10 @@ local tasklist_buttons = gears.table.join(
                                               awful.menu.client_list({ theme = { width = 250 } })
                                           end),
                      awful.button({ }, 4, function ()
-                                              awful.client.focus.byidx(1)
+                                              awful.client.focus.byidx(-1)
                                           end),
                      awful.button({ }, 5, function ()
-                                              awful.client.focus.byidx(-1)
+                                              awful.client.focus.byidx( 1)
                                           end))
 
 local function set_wallpaper(s)
@@ -295,6 +302,13 @@ local tagCount = 9
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
+    naughty.notify({title = 
+    "Screen " .. s.index .. "\n\t" ..
+        "Width - " .. s.geometry.width .."\n\t" ..
+        "Height - " .. s.geometry.height .. "\n\t" ..
+        "X - " .. s.geometry.x .. "\n\t" ..
+        "Y - " .. s.geometry.y,
+    timeout = 30})
 
     -- Each screen has its own tag table.
     -- warning: don't try changing these with clients open, will screw up and lose your clients from any of the tags not on the first tag and you will have to pkill them.
@@ -314,10 +328,10 @@ awful.screen.connect_for_each_screen(function(s)
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
     s.mylayoutbox:buttons(gears.table.join(
-                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
-                           awful.button({ }, 4, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+                           awful.button({ }, 1, function () awful.layout.inc(-1) end),
+                           awful.button({ }, 3, function () awful.layout.inc( 1) end),
+                           awful.button({ }, 4, function () awful.layout.inc(-1) end),
+                           awful.button({ }, 5, function () awful.layout.inc( 1) end)))
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
@@ -378,8 +392,8 @@ end)
 -- root is the term for the main X window, in awesome it means the desktop itself behind all the windows (on every screen) as well as the "awesome instance" where all the global key bindings live
 root.buttons(gears.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 4, awful.tag.viewprev),
+    awful.button({ }, 5, awful.tag.viewnext)
 ))
 -- }}}
 
@@ -410,7 +424,7 @@ globalkeys = gears.table.join(
               {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
-    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx( 1)    end,
               {description = "swap with next client by index", group = "client"}),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
               {description = "swap with previous client by index", group = "client"}),
@@ -511,6 +525,7 @@ globalkeys = gears.table.join(
                     textbox      = awful.screen.focused().mypromptbox.widget,
                     exe_callback = function (str)
                         success, val = al.eval(str)
+                        if type(val) == "table" then val = al.dumps(val) end
                         naughty.notify({ preset = naughty.config.presets.normal,
                                 title = "Lua Output",
                                 text = "Input: "..str.."\nSuccess: "..tostring(success).."\nOutput: "..val,
@@ -551,13 +566,13 @@ clientkeys = gears.table.join(
             c.minimized = true
         end ,
         {description = "minimize", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "m",
+    awful.key({ modkey, "Control"   }, "m",
         function (c)
             c.maximized = not c.maximized
             c:raise()
         end ,
         {description = "(un)maximize", group = "client"}),
-    awful.key({ modkey, "Control" }, "m",
+    awful.key({ modkey }, "m",
         function (c)
             c.maximized_vertical = not c.maximized_vertical
             c:raise()
@@ -569,7 +584,7 @@ clientkeys = gears.table.join(
             --c:raise()
         --end ,
         --{description = "(un)maximize horizontally", group = "client"}),
-    awful.key({ modkey,           }, "m", function(c) 
+    awful.key({ modkey, "Shift"    }, "m", function(c) 
         lain.util.magnify_client(c, .5, .5) 
         c:raise()
     end,
@@ -579,10 +594,10 @@ clientkeys = gears.table.join(
 -- Bind all key numbers to tags.
 -- Be careful: we use keycodes to make it work on any keyboard layout.
 -- This should map on the top row of your keyboard, usually 1 to 9.
-for i = 1, 9 do
+for i = 1, tagCount do
     globalkeys = gears.table.join(globalkeys,
         -- View tag only.
-        awful.key({ modkey }, "#" .. i + 9,
+        awful.key({ modkey }, "#" .. i + tagCount,
                   function ()
                         local screen = awful.screen.focused()
                         local tag = screen.tags[i]
@@ -592,7 +607,7 @@ for i = 1, 9 do
                   end,
                   {description = "view tag #"..i, group = "tag"}),
         -- Toggle tag display.
-        awful.key({ modkey, "Control" }, "#" .. i + 9,
+        awful.key({ modkey, "Control" }, "#" .. i + tagCount,
                   function ()
                       local screen = awful.screen.focused()
                       local tag = screen.tags[i]
@@ -602,7 +617,7 @@ for i = 1, 9 do
                   end,
                   {description = "toggle tag #" .. i, group = "tag"}),
         -- Move client to tag.
-        awful.key({ modkey, "Shift" }, "#" .. i + 9,
+        awful.key({ modkey, "Shift" }, "#" .. i + tagCount,
                   function ()
                       if client.focus then
                           local tag = client.focus.screen.tags[i]
@@ -613,7 +628,7 @@ for i = 1, 9 do
                   end,
                   {description = "move focused client to tag #"..i, group = "tag"}),
         -- Toggle tag on focused client.
-        awful.key({ modkey, "Control", "Shift" }, "#" .. i + 9,
+        awful.key({ modkey, "Control", "Shift" }, "#" .. i + tagCount,
                   function ()
                       if client.focus then
                           local tag = client.focus.screen.tags[i]
@@ -694,6 +709,20 @@ awful.rules.rules = {
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = true }
+    },
+
+    { rule = { class = "Audacious" },
+        properties = { 
+            titlebars_enabled = false,
+            ontop = true
+        },
+        callback = function(c)
+            for s in screen do
+                for t in s.tags do
+
+                end
+            end
+        end
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -777,8 +806,9 @@ apps = {
 function spawn(app)
     local options = apps[app.."Options"]
     if options == nil then options = '' end
-    awful.util.spawn_with_shell("pgrep -u $USER -x " .. app .. " > /dev/null || (" .. app .. ' ' .. options .. " &)")
+    awful.spawn.with_shell("pgrep -u $USER -x " .. app .. " > /dev/null || (" .. app .. ' ' .. options .. " &)")
 end
+
 for i = 1, #apps do
     spawn(apps[i])
 end
