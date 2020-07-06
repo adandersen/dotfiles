@@ -82,6 +82,7 @@ nnoremap <silent> <Leader><Tab> :b#<Enter>
 nnoremap <Leader> :WhichKey '<Space>'<CR>
 nnoremap <LocalLeader> :<c-u>WhichKey  ','<CR>
 nnoremap <Leader>zz zzLkkzz
+nnoremap zz zz10jzz10k
 nnoremap <Leader>/ :Lines 
 nnoremap <Leader>// :BLines 
 
@@ -210,6 +211,8 @@ set number
 set relativenumber
 " enable mouse for all vim modes (the a)
 set mouse=a
+" let vim_current_word do the highlighting
+set nohlsearch
 
 " Create undo directory
 let undoDir = globpath($HOME, '.config/nvim/undodir')
@@ -307,6 +310,11 @@ LuciusDarkLowContrast " makes the theme look good
 augroup NerdTree
     au! NerdTree
     autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+augroup end
+
+augroup FileTypeGroup
+    au! FileTypeGroup
+    autocmd FileType python setlocal colorcolumn=100
 augroup end
 
 " Using vim_current_word instead for now as I like it more

@@ -9,6 +9,8 @@ export XDG_CONFIG_DIRS=/etc/xdg                    # system config search order,
 export XDG_DATA_DIRS=/usr/local/share:/usr/share   # search order of data, earlier first, XDG_DATA_HOME precedes this
 export XDG_CACHE_HOME=~/.cache                     # runtime apps non-essential user data files
 export XDG_RUNTIME_DIR=~/.runtime                  # runtime apps non-essential user runtime files. Must be deleted on logout or shutdown/reboot
+export LANG=en_US.UTF-8 # program language
+export LC_CTYPE=en_US.UTF-8 # programmatic character function rules, e.g. for tolower(), toupper(), isalpha()
 
 export KUBE_EDITOR='vim'
 export EDITOR='vim'

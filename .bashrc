@@ -37,10 +37,6 @@ alias gb="git checkout -b "
 
 function src() {
 	source ~/.bashrc
-	local brcl=~/.bashrc_local
-	if [ -f $brcl ]; then
-		source $brcl
-	fi
 }
 
 gbc() {
