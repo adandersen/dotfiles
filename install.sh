@@ -1,13 +1,14 @@
 #! /bin/bash
 # assumes ubuntu
-mkdir -p ~/.local/dotfiles
+mkdir -p ~/.config/dotfiles
 mkdir -p ~/.local/bin
-dotfiles_absolute_path="$(cd ~/.local/dotfiles && pwd)"
+mkdir -p ~/dev/3rdParty
+dotfiles_absolute_path="$(cd ~/.config/dotfiles && pwd)"
 local_bin_absolute_path="$(cd ~/.local/bin && pwd)"
 
 if [ ! "$(pwd)" == $dotfiles_absolute_path ]; then
     echo "currently in $(pwd)"
-    echo "dotfiles directory needs to be in ~/.local/dotfiles to proceed"
+    echo "dotfiles directory needs to be in ~/.config/dotfiles to proceed"
     exit
 fi
 NC='\033[0m' # no color
@@ -56,7 +57,6 @@ installAwesomeWM() {
         git clone https://github.com/lcpz/lain.git ~/.config/awesome/lain # other widgets, layouts etc
 
         yellow "Cloning AwesomeWM code"
-        mkdir -p ~/dev/3rdParty
         cd ~/dev/3rdParty
         git clone git@github.com:awesomeWM/awesome.git
     fi

@@ -76,6 +76,7 @@ myhelp() {
 	setjdk -h
 	echo ""
 	echo "Other Commands: "
+    echo "Ripgrep find files: rf filename [directory(cwd by default)]"
 	echo "Show Dependencies: gradle efile-service:dependencies --configuration compile"
 }
 
@@ -126,6 +127,23 @@ function setjdk() {
         export JAVA_HOME=`/usr/libexec/java_home -v $@`
         export PATH=$JAVA_HOME/bin:$PATH
     fi
+}
+
+# ripgrep find file names
+rf() {
+    if [ -z "$2" ]; then
+        rg --files | rg "$1"
+    else
+        rg --files "$2" | rg "$1"
+    fi
+}
+
+rc() {
+    redis-cli -p 505$1 -a canopytax
+}
+
+rci() {
+    redis-cli -p 505$1 -a canopytax $2
 }
 
 # don't put duplicate lines or lines starting with space in the history.
