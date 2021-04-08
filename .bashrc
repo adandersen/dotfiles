@@ -8,6 +8,16 @@ case $- in
       *) return;;
 esac
 
+export TERMINAL=kitty
+export PGPASSWORD=canopytax
+export PATH=~/.poetry/bin:/usr/local/Cellar/openssl/1.0.2n/bin/openssl:$PATH
+export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}";
+export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"; 
+export HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar";
+export HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew";
+export MANPATH="/home/linuxbrew/.linuxbrew/share/man${MANPATH+:$MANPATH}:";
+export INFOPATH="/home/linuxbrew/.linuxbrew/share/info:${INFOPATH:-}";
+
 ### editing shortcuts
 alias bp="vim ~/.bash_profile"
 alias bpl="vim ~/.bash_profile_local"
@@ -35,11 +45,20 @@ alias log='git log'
 alias dif="git diff --ignore-space-at-eol -w --word-diff=color" # the ignore-space setting ignores differences in operating system line endings, e.g. /r/n /r /n
 alias gb="git checkout -b "
 
-function src() {
+
+# https://unix.stackexchange.com/a/217223
+if [ ! -S ~/.ssh/ssh_auth_sock ]; then  
+    eval $(ssh-agent)
+    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
+fi
+export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
+ssh-add -l > /dev/null || ssh-add
+
+src () {
 	source ~/.bashrc
 }
 
-gbc() {
+gbc () {
 	if [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
 		echo "Git Branch Checkout"
 		echo "	gbc branchName commitMessage"
@@ -56,7 +75,7 @@ gbc() {
 	fi
 }
 
-gpm() {
+gpm () {
 	if [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
 		echo "Git Pull Master"
 		echo "	gpm # use this on a non-master branch: 1) checks out master 2) pull 3) deletes the branch currently on"
@@ -68,9 +87,21 @@ gpm() {
 	fi
 }
 
-myhelp() {
+git-prune-remote () {
+    case "$1" in
+        -h|--help) echo 'usage: git-prune-remote'
+                   echo '  Deletes local branches that no longer exist on the remote server.' 
+                   ;;
+                   # The `git fetch -p` removes any remote-tracking references that no longer exist on the remote
+                *) git fetch -p && for branch in $(git branch -vv | grep ': gone]' | awk '{print $1}'); do git branch -D $branch; done 
+                   ;;
+    esac
+}
+
+myhelp () {
 	gbc -h
 	gpm -h
+    branch-remove -h
     echo ""
     echo "src: sources ~/.bashrc"
 	setjdk -h
@@ -80,41 +111,32 @@ myhelp() {
 	echo "Show Dependencies: gradle efile-service:dependencies --configuration compile"
 }
 
-dcfunc() {
+dcfunc () 
+{
 	export MY_LOCAL_IP=$(myIP)
 	sudo docker-compose "$@"
 }
-myIP() {
+myIP () 
+{
 	ifconfig eth0 | grep -m1 inet | awk '{print $2}'
 	#ifconfig en0 inet | grep inet | awk '{print $2}'
 }
 alias dc=dcfunc
 
-dclean() {
+dclean () 
+{
 	docker rm -v $(docker ps -a -q -f status=exited); 
     docker rmi $(docker images -f 'dangling=true' -q);
 }
 
-removeFromPath () {
+removeFromPath () 
+{
     export PATH=$(echo $PATH | sed -E -e "s;:$1;;" -e "s;$1:?;;")
 }
 
-# Codi
-# Usage: codi [filetype] [filename]
-codi() {
-  local syntax="${1:-lua}"
-  shift
-  vim -c \
-    "let g:startify_disable_at_vimenter = 1 |\
-    set bt=nofile ls=0 noru nonu nornu |\
-    hi ColorColumn ctermbg=NONE |\
-    hi VertSplit ctermbg=NONE |\
-    hi NonText ctermfg=0 |\
-    Codi $syntax" "$@"
-}
-
 # set and change java versions
-function setjdk() {
+setjdk () 
+{
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Set JDK"
         echo "  setjdk 1.8"
@@ -130,7 +152,8 @@ function setjdk() {
 }
 
 # ripgrep find file names
-rf() {
+rf () 
+{
     if [ -z "$2" ]; then
         rg --files | rg "$1"
     else
@@ -138,12 +161,29 @@ rf() {
     fi
 }
 
-rc() {
+rc () 
+{
     redis-cli -p 505$1 -a canopytax
 }
 
-rci() {
+rci () 
+{
     redis-cli -p 505$1 -a canopytax $2
+}
+
+branch-remove () 
+{
+    if [ "$1" = '-h' ]; then
+        echo 'branch-remove branchName'
+        echo '  operates in path ~/dev/code on all directories'
+        return 0
+    fi
+    pushd . > /dev/null
+    for file in $(command ls -1 ~/dev/code); do 
+        cd ~/dev/code/$file
+        git branch | grep $1 > /dev/null && git checkout $1 && gpm || echo failed $(pwd)
+    done
+    popd > /dev/null
 }
 
 # don't put duplicate lines or lines starting with space in the history.
@@ -170,7 +210,8 @@ shopt -s globstar
 
 TERM=xterm-256color
 
-function color_my_prompt {
+color_my_prompt () 
+{
     local __user_and_host="\[\033[01;32m\]\u@\h"
     local __cur_location="\[\033[01;34m\]\w"
     local __git_branch_color="\[\033[31m\]"
