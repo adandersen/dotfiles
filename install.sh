@@ -1,6 +1,7 @@
 #! /bin/bash
 # assumes ubuntu
 mkdir -p ~/.config/dotfiles
+mkdir -p ~/.config/i3
 mkdir -p ~/.local/bin
 mkdir -p ~/dev/3rdParty
 dotfiles_absolute_path="$(cd ~/.config/dotfiles && pwd)"
@@ -40,6 +41,7 @@ linkDotfiles() {
         ln -f $dotfiles_absolute_path/.Xmodmap ~/.Xmodmap
         ln -f $dotfiles_absolute_path/.xmodmaprc ~/.xmodmaprc
         ln -f $dotfiles_absolute_path/.xsession ~/.xsession
+        ln -f $dotfiles_absolute_path/i3/config ~/.config/i3/config
 
         source ~/.bash_profile # source in current terminal
     fi
@@ -130,6 +132,12 @@ installUtilities() {
     fi
 }
 
+installI3() {
+    if [ ! -x "$(command -v i3" ]; then
+        sudo apt install i3 i3status dmenu i3lock xbacklight feh conky
+    fi
+}
+
 installApps() {
     installKitty
     installLua
@@ -138,6 +146,7 @@ installApps() {
     installI3lockColor
     installNodejs
     installUtilities
+    installI3
 }
 
 
