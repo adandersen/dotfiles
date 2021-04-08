@@ -141,7 +141,7 @@ installI3() {
 installApps() {
     installKitty
     installLua
-    installAwesomeWM
+    #installAwesomeWM
     installNeovim
     installI3lockColor
     installNodejs
