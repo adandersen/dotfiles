@@ -8,7 +8,28 @@ case $- in
       *) return;;
 esac
 
+### XDG env vars https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+# I'm mostly using the defaults...
+export XDG_CONFIG_HOME=~/.config                   # personal configuration files
+export XDG_DATA_HOME=~/.local/share                # personal user data
+export XDG_CONFIG_DIRS=/etc/xdg                    # system config search order, XDG_CONFIG_HOME is searched first
+export XDG_DATA_DIRS=/usr/local/share:/usr/share   # search order of data, earlier first, XDG_DATA_HOME precedes this
+export XDG_CACHE_HOME=~/.cache                     # runtime apps non-essential user data files
+export XDG_RUNTIME_DIR=~/.runtime                  # runtime apps non-essential user runtime files. Must be deleted on logout or shutdown/reboot
+export LANG=en_US.UTF-8 # program language
+export LC_CTYPE=en_US.UTF-8 # programmatic character function rules, e.g. for tolower(), toupper(), isalpha()
+
 export TERMINAL=kitty
+export KUBE_EDITOR='vim'
+export EDITOR='vim'
+
+# --files: List files that would be searched but do not search
+# --no-ignore: Do not respect .gitignore, etc...
+# --hidden: Search hidden files and folders
+# --follow: Follow symlinks
+# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.venv/lib64/*" --glob "!.git/*"' # meant for fuzzy finder in vim
+
 export PGPASSWORD=canopytax
 export PATH=~/.poetry/bin:/usr/local/Cellar/openssl/1.0.2n/bin/openssl:$PATH
 export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}";
@@ -63,6 +84,10 @@ src () {
 }
 
 gbc () {
+    # make it so git push will work without needing '-u origin $branch'
+    # only needs to be done once, but here to get other scripts to work on a new machine
+    git config --global push.default current 
+
 	if [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
 		echo "Git Branch Checkout"
 		echo "	gbc branchName commitMessage"
@@ -74,7 +99,7 @@ gbc () {
 			echo 'commit'
 			git commit --verbose
 			echo 'pushing'
-			git push -u origin $branch | grep -o 'https://.*$'
+			git push | grep -o 'https://.*$'
 		done
 	fi
 }
@@ -106,6 +131,7 @@ myhelp () {
 	gbc -h
 	gpm -h
     branch-remove -h
+    git-prune-remote -h
     echo ""
     echo "src: sources ~/.bashrc"
 	setjdk -h
@@ -115,32 +141,30 @@ myhelp () {
 	echo "Show Dependencies: gradle efile-service:dependencies --configuration compile"
 }
 
-dcfunc () 
-{
+dcfunc () {
 	export MY_LOCAL_IP=$(myIP)
 	sudo docker-compose "$@"
 }
-myIP () 
-{
+
+alias dc=dcfunc
+
+myIP () {
 	ifconfig eth0 | grep -m1 inet | awk '{print $2}'
 	#ifconfig en0 inet | grep inet | awk '{print $2}'
 }
-alias dc=dcfunc
 
-dclean () 
-{
+
+dclean () {
 	docker rm -v $(docker ps -a -q -f status=exited); 
     docker rmi $(docker images -f 'dangling=true' -q);
 }
 
-removeFromPath () 
-{
+removeFromPath () {
     export PATH=$(echo $PATH | sed -E -e "s;:$1;;" -e "s;$1:?;;")
 }
 
 # set and change java versions
-setjdk () 
-{
+setjdk () {
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         echo "Set JDK"
         echo "  setjdk 1.8"
@@ -156,8 +180,7 @@ setjdk ()
 }
 
 # ripgrep find file names
-rf () 
-{
+rf () {
     if [ -z "$2" ]; then
         rg --files | rg "$1"
     else
@@ -165,18 +188,54 @@ rf ()
     fi
 }
 
-rc () 
-{
+rc () {
     redis-cli -p 505$1 -a canopytax
 }
 
-rci () 
-{
+rci () {
     redis-cli -p 505$1 -a canopytax $2
 }
 
-branch-remove () 
-{
+# create a branch in all the arguments
+git-create-branches () {
+    local branch=
+    while [ ! -z "$1" ]; do
+        case "$1" in
+            -b) shift
+                branch=$1
+                ;;
+             *) cd "$1"
+                echo "Entered folder $1"
+                git checkout -b "$branch"
+                cd - &> /dev/null
+                ;;
+        esac
+
+        shift
+    done
+}
+
+git-delete-branches () {
+    local branch=
+    while [ ! -z "$1" ]; do
+        case "$1" in
+            -b) shift
+                branch=$1
+                ;;
+             *) cd "$1"
+                echo "Entered folder $1"
+                git checkout master
+                git branch -D "$branch"
+                git pull
+                cd - &> /dev/null
+                ;;
+        esac
+
+        shift
+    done
+}
+
+branch-remove () {
     if [ "$1" = '-h' ]; then
         echo 'branch-remove branchName'
         echo '  operates in path ~/dev/code on all directories'
@@ -188,6 +247,17 @@ branch-remove ()
         git branch | grep $1 > /dev/null && git checkout $1 && gpm || echo failed $(pwd)
     done
     popd > /dev/null
+}
+
+man () {
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[45;93m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+
+    command man "$@"
 }
 
 # don't put duplicate lines or lines starting with space in the history.

@@ -8,12 +8,19 @@
 # i3 config file (v4)
 #
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
+#
+#
+# *****************************************
+# Show all bindsym names with: xmodmap -pke, or xev
+#
+# Find the window class for bindings with: xprop | grep 'CLASS'
+# *****************************************
 
 set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:Fira Code 9
+font pango:Fira Code 4
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -30,12 +37,18 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
+exec kitty
+exec keepassxc
+
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# bindsym $mod+bracketleft exec --no-startup-id import /home/alan/Pictures/$(date --iso-8601=seconds).png
+# bindsym $mod+bracketright exec kitty xmodmap -pke | less
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -79,10 +92,10 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+semicolon split h
+bindsym $mod+minus split h
 
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $mod+bar split v
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -100,6 +113,17 @@ bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
+
+# focus bindings. If multiple instances of the same program are on different workspaces, the focus will find the class on the same workspace enabling you to have the same program on different workspaces and have it stil work.
+bindsym $mod+bracketleft [class="kitty"] focus
+bindsym $mod+semicolon [class="Brave-browser"] focus
+bindsym $mod+u [title="^java-all-projects"] focus
+bindsym $mod+Shift+u [title="^python-all-projects"] focus
+
+# scratchpad bindings
+bindsym $mod+Shift+i move scratchpad
+bindsym $mod+i [class="Sublime_text"] scratchpad show
+bindsym $mod+p [class="keepassxc"] scratchpad show
 
 # focus the child container
 #bindsym $mod+d focus child
@@ -198,11 +222,32 @@ mode "$mode_launcher" {
     bindsym Return mode "default"
 }
 
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id lock, mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
+    bindsym s exec --no-startup-id systemctl suspend, mode "default"
+    bindsym h exec --no-startup-id systemctl hibernate, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id systemctl poweroff, mode "default"
+
+    # back to normal: Enter or Escape
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+Pause mode "$mode_system"
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
+# hide mode keeps the bar hidden by default, and the modifier will show the bar on press of the assigned key
 bar {
-        status_command i3status
-        #i3bar_command i3bar --transparency
+    mode hide
+    modifier Mod4
+    tray_output primary
+    font pango:Fira Code 7
+    status_command i3status
+
+    #i3bar_command i3bar --transparency
 }
 
 # run on first i3 start (not on i3 refresh, use exec_always for that)
