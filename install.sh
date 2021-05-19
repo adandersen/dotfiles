@@ -139,6 +139,7 @@ installI3() {
 }
 
 installStarship() {
+    # documentation: https://starship.rs/guide/#%F0%9F%9A%80-installation
     if [ ! -x "$(command -v starship" ]; then
         sh -c "$(curl -fsSL https://starship.rs/install.sh)"
     fi
