@@ -39,11 +39,12 @@ exec --no-startup-id nm-applet
 
 exec kitty
 exec keepassxc
+exec subl
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
@@ -115,15 +116,17 @@ bindsym $mod+space focus mode_toggle
 bindsym $mod+a focus parent
 
 # focus bindings. If multiple instances of the same program are on different workspaces, the focus will find the class on the same workspace enabling you to have the same program on different workspaces and have it stil work.
-bindsym $mod+bracketleft [class="kitty"] focus
+# If there are multiple with the same class it will just toggle between them.
+bindsym $mod+i [class="kitty"] focus
 bindsym $mod+semicolon [class="Brave-browser"] focus
-bindsym $mod+u [title="^java-all-projects"] focus
-bindsym $mod+Shift+u [title="^python-all-projects"] focus
+bindsym $mod+o [title="^java-all-projects"] focus
+bindsym $mod+Shift+o [title="^python-all-projects"] focus
 
 # scratchpad bindings
 bindsym $mod+Shift+i move scratchpad
-bindsym $mod+i [class="Sublime_text"] scratchpad show
-bindsym $mod+p [class="keepassxc"] scratchpad show
+bindsym $mod+p [class="Sublime_text"] scratchpad show
+bindsym $mod+bracketleft [class="keepassxc"] scratchpad show
+bindsym $mod+m [class="Rhythmbox"] scratchpad show
 
 # focus the child container
 #bindsym $mod+d focus child
@@ -211,7 +214,7 @@ bindsym $mod+r mode "resize"
 # Press $mod+o followed by the letter in brackets to launch
 # its respective program
 set $mode_launcher Launch: [b]rave [f]iles [t]hunderbird
-bindsym $mod+o mode "$mode_launcher"
+bindsym $mod+u mode "$mode_launcher"
 
 mode "$mode_launcher" {
     bindsym b exec brave-browser
@@ -241,7 +244,7 @@ bindsym $mod+Pause mode "$mode_system"
 # finds out, if available)
 # hide mode keeps the bar hidden by default, and the modifier will show the bar on press of the assigned key
 bar {
-    mode hide
+    mode hide   
     modifier Mod4
     tray_output primary
     font pango:Fira Code 7

@@ -6,23 +6,22 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 " the vundle package, let vundle autoupdate itself
-Plugin 'VundleVim/Vundle.vim'
+"Plugin 'VundleVim/Vundle.vim'
 
 "Plugin 'elixir-editors/vim-elixir'
-Plugin 'scrooloose/nerdtree.git'
-Plugin 'fugitive.vim'
-Plugin 'Buffergator'
-Plugin 'unimpaired.vim'
-Plugin 'DeleteTrailingWhitespace'
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'Solarized'
-Plugin 'L9'
-Plugin 'FuzzyFinder'
-Plugin 'bling/vim-airline'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'caenrique/nvim-maximize-window-toggle'
-Plugin 'joshdick/onedark.vim'
-Plugin 'liuchengxu/vim-which-key'
+"Plugin 'scrooloose/nerdtree.git'
+"Plugin 'fugitive.vim'
+"Plugin 'Buffergator'
+"Plugin 'unimpaired.vim'
+"Plugin 'DeleteTrailingWhitespace'
+"Plugin 'terryma/vim-multiple-cursors'
+"Plugin 'Solarized'
+"Plugin 'L9'
+"Plugin 'FuzzyFinder'
+"Plugin 'bling/vim-airline'
+"Plugin 'ctrlpvim/ctrlp.vim'
+"Plugin 'joshdick/onedark.vim'
+"Plugin 'liuchengxu/vim-which-key'
 "Plugin 'justinmk/vim-sneak'
 
 call vundle#end()
@@ -73,7 +72,7 @@ let maplocalleader = "\\"
 
 " Run commands that require an interactive shell
 nnoremap <Leader>r :RunInInteractiveShell<space>
-nnoremap <Leader>wm :ToggleOnly<Enter>
+nnoremap <Leader>wm :tab split<Enter>
 nnoremap <Leader>ws :split<Enter><c-w>j
 nnoremap <Leader>wS :split<Enter>
 nnoremap <Leader>wv :vsplit<Enter><c-w>l
@@ -93,6 +92,7 @@ nnoremap <silent> <Leader><Tab> :b#<Enter>
 nnoremap <leader> :WhichKey '<Space>'<CR>
 nnoremap <localleader> :<c-u>WhichKey  ','<CR>
 nnoremap <Leader>s :R rg 
+nnoremap zz zzLkkzzrr
 
 
 "let s:window_number

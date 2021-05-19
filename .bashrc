@@ -335,3 +335,5 @@ export SDKMAN_DIR="/home/alan/.sdkman"
 if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
 fi
+
+eval "$(starship init bash)"

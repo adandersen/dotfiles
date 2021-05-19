@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 # assumes ubuntu
 mkdir -p ~/.config/dotfiles
 mkdir -p ~/.config/i3
@@ -138,15 +138,22 @@ installI3() {
     fi
 }
 
+installStarship() {
+    if [ ! -x "$(command -v starship" ]; then
+        sh -c "$(curl -fsSL https://starship.rs/install.sh)"
+    fi
+}
+
 installApps() {
     installKitty
-    installLua
+    #installLua
     #installAwesomeWM
     installNeovim
-    installI3lockColor
+    #installI3lockColor
     installNodejs
     installUtilities
     installI3
+    installStarship
 }
 
 
