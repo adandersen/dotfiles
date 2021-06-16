@@ -65,18 +65,16 @@ installAwesomeWM() {
 }
 
 installNeovim() {
-    if [ ! -x "$(command -v nvim)" ]; then
-        yellow "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
-        mkdir -p ~/.config/nvim
-        ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
-        curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	yellow "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
+	mkdir -p ~/.config/nvim
+	ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
+	curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
+	    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-        echo ""
-        lightcyan "Done setting up neovim!"
-        lightcyan "PlugInstall, don't forget!"
-        echo ""
-    fi
+	echo ""
+	lightcyan "Done setting up neovim!"
+	lightcyan "PlugInstall, don't forget!"
+	echo ""
 }
 
 installI3lockColor() {
@@ -137,32 +135,33 @@ installUtilities() {
 }
 
 installI3() {
-    if [ ! -x "$(command -v i3" ]; then
+    if [ ! -x "$(command -v i3)" ]; then
         sudo apt install i3 i3status dmenu i3lock xbacklight feh conky
     fi
 }
 
 installStarship() {
     # documentation: https://starship.rs/guide/#%F0%9F%9A%80-installation
-    if [ ! -x "$(command -v starship" ]; then
+    if [ ! -x "$(command -v starship)" ]; then
         sh -c "$(curl -fsSL https://starship.rs/install.sh)"
     fi
 }
 
 
 installApps() {
-    installKitty
+    #installKitty
     #installLua
     #installAwesomeWM
     installNeovim
     #installI3lockColor
-    installNodejs
+    #installNodejs
     installUtilities
-    installI3
+    #installI3
     installStarship
 }
 
 
 linkDotfiles
-installApps
+#installApps
+
 

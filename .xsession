@@ -13,3 +13,7 @@
 
 # remap caps lock to escape and right alt to ctrl
 [ -r ~/.Xmodmap ] && xmodmap ~/.Xmodmap 
+
+# below for arch, xmodmap doesn't seem to work on arch for some reason
+command -v setxkbmap > /dev/null 2>&1 && setxkbmap -option caps:escape
+command -v setxkbmap > /dev/null 2>&1 && setxkbmap -option ctrl:swap_rwin_rctl

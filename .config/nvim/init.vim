@@ -9,28 +9,18 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/DeleteTrailingWhitespace'
 Plug 'vim-scripts/L9'
-Plug 'terryma/vim-multiple-cursors'
+"Plug 'terryma/vim-multiple-cursors'
 Plug 'bling/vim-airline'
 Plug 'liuchengxu/vim-which-key'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'mhinz/vim-signify'
-" live coding in vim. Best used from the command line (see codi command in .bashrc
-Plug 'metakirby5/codi.vim'
-" highlight current word
-Plug 'dominikduda/vim_current_word'
-" TODO: requires configuring to work in lua, add a lua.vim file in
-" after/syntax
-" could also try Plug 'chrisbra/Colorizer'
 Plug 'ap/vim-css-color'
 Plug 'stefandtw/quickfix-reflector.vim'
-" shows scrolling context window at top of functions/classes
 Plug 'tmhedberg/simpylfold'
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " if you enable vim-sneak, it replaces s with a custom key so rebind it...
 "Plug 'justinmk/vim-sneak'
 Plug 'junegunn/fzf', { 'dir': '~/.local/fzf', 'do': './install --all' } " fuzzy finder
 Plug 'junegunn/fzf.vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-"Plug 'ctrlpvim/ctrlp.vim'
 call plug#end()
 
 let mapleader = " "
