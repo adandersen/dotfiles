@@ -166,11 +166,13 @@ install [-l] [-a]
     --link-only    -l  hard link all configuration files without installing anything
     --install-apps -a  install all applications
     --all              link configuration files and install
+    --help         -h  show this help
+
 EOF
 }
 
 case $1 in
-    -h)
+    --help | -h)
         showHelp
         ;;
     --link-only | -l) linkDotFiles ;;
