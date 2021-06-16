@@ -2,10 +2,12 @@
 # assumes ubuntu
 mkdir -p ~/.config/dotfiles
 mkdir -p ~/.config/i3
+mkdir -p ~/.config/nvim
 mkdir -p ~/.local/bin
 mkdir -p ~/dev/3rdParty
 dotfiles_absolute_path="$(cd ~/.config/dotfiles && pwd)"
 local_bin_absolute_path="$(cd ~/.local/bin && pwd)"
+home_dir="$(echo ~)"
 
 if [ ! "$(pwd)" == $dotfiles_absolute_path ]; then
     echo "currently in $(pwd)"
@@ -30,21 +32,20 @@ yellow() {
 }
 
 linkDotfiles() {
-    if [ ! -f ~/.ideavimrc ]; then
-        yellow "Setup dot files, hard linking in $HOME"
-        ln -f $dotfiles_absolute_path/.ideavimrc ~/.ideavimrc
-        ln -f $dotfiles_absolute_path/.bash_profile ~/.bash_profile
-        ln -f $dotfiles_absolute_path/.bashrc ~/.bashrc
-        ln -f $dotfiles_absolute_path/.gitconfig ~/.gitconfig
-        ln -f $dotfiles_absolute_path/.tmux.conf ~/.tmux.conf
-        ln -f $dotfiles_absolute_path/.inputrc ~/.inputrc
-        ln -f $dotfiles_absolute_path/.Xmodmap ~/.Xmodmap
-        ln -f $dotfiles_absolute_path/.xmodmaprc ~/.xmodmaprc
-        ln -f $dotfiles_absolute_path/.xsession ~/.xsession
-        ln -f $dotfiles_absolute_path/i3/config ~/.config/i3/config
+  yellow "Setup dot files, hard linking in $HOME"
+  ln -f $dotfiles_absolute_path/.ideavimrc "$home_dir"/.ideavimrc
+  ln -f $dotfiles_absolute_path/.bash_profile "$home_dir"/.bash_profile
+  ln -f $dotfiles_absolute_path/.bashrc "$home_dir"/.bashrc
+  ln -f $dotfiles_absolute_path/.gitconfig "$home_dir"/.gitconfig
+  ln -f $dotfiles_absolute_path/.tmux.conf "$home_dir"/.tmux.conf
+  ln -f $dotfiles_absolute_path/.inputrc "$home_dir"/.inputrc
+  ln -f $dotfiles_absolute_path/.Xmodmap "$home_dir"/.Xmodmap
+  ln -f $dotfiles_absolute_path/.xmodmaprc "$home_dir"/.xmodmaprc
+  ln -f $dotfiles_absolute_path/.xsession "$home_dir"/.xsession
+  ln -f $dotfiles_absolute_path/i3/config "$home_dir"/.config/i3/config
+	ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
 
-        source ~/.bash_profile # source in current terminal
-    fi
+  source "$home_dir"/.bash_profile # source in current terminal
 }
 
 installAwesomeWM() {
@@ -66,8 +67,6 @@ installAwesomeWM() {
 
 installNeovim() {
 	yellow "Setup neovim config, hard linking  ~/.config/nvim/init.vim"
-	mkdir -p ~/.config/nvim
-	ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
 	curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 	    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
@@ -161,7 +160,27 @@ installApps() {
 }
 
 
-linkDotfiles
-#installApps
+showHelp() {
+    cat <<EOF
+install [-l] [-a]
+    --link-only    -l  hard link all configuration files without installing anything
+    --install-apps -a  install all applications
+    --all              link configuration files and install
+EOF
+}
 
+case $1 in
+    -h)
+        showHelp
+        ;;
+    --link-only | -l) linkDotFiles ;;
+    --install-apps | -a) 
+        installApps 
+        ;;
+    --all)
+        linkDotFiles
+        installApps
+        ;;
+       *) showHelp ;;
+esac
 
