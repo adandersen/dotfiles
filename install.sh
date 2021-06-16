@@ -172,17 +172,13 @@ EOF
 }
 
 case $1 in
-    --help | -h)
-        showHelp
-        ;;
-    --link-only | -l) linkDotFiles ;;
-    --install-apps | -a) 
-        installApps 
-        ;;
+    --help | -h) showHelp ;;
+    --link-only | -l) linkDotfiles ;;
+    --install-apps | -a) installApps ;;
     --all)
         linkDotFiles
         installApps
         ;;
-       *) showHelp ;;
+    *) showHelp ;;
 esac
 
