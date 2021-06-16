@@ -15,7 +15,8 @@ Plug 'liuchengxu/vim-which-key'
 Plug 'ap/vim-css-color'
 Plug 'stefandtw/quickfix-reflector.vim'
 Plug 'tmhedberg/simpylfold'
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" don't forget to :CocInstall coc-go etc.
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " if you enable vim-sneak, it replaces s with a custom key so rebind it...
 "Plug 'justinmk/vim-sneak'
 Plug 'junegunn/fzf', { 'dir': '~/.local/fzf', 'do': './install --all' } " fuzzy finder
@@ -51,7 +52,7 @@ nnoremap <Leader>lp :tabp<Enter>
 nnoremap ) :tabp<Enter>
 nnoremap <Leader>ft :GFiles<Enter>
 " not real grep, uses ripgrep through fzf
-nnoremap <Leader>ff :Grep 
+nnoremap <Leader>ff :Rg 
 nnoremap <Leader>bb :Buffers
 nnoremap <Leader>an :NERDTreeFind<Enter>
 nnoremap <Leader>gs :Gstatus<Enter>
@@ -76,9 +77,6 @@ nnoremap zz zz10jzz10k
 nnoremap <Leader>/ :Lines 
 nnoremap <Leader>// :BLines 
 
-" what does this do?
-nnoremap <Leader>r <plug>(fzf-maps-n)
-
 " quickfix bindings
 nnoremap <Leader>qn :cnext<CR>
 nnoremap <Leader>qp :cprevious<CR>
@@ -92,6 +90,8 @@ inoremap {<CR> {<CR>}O
 nnoremap <Leader>ev :tab vsplit $MYVIMRC<CR>
 nnoremap <Leader>ebp :tab vsplit ~/.bash_profile<CR>
 nnoremap <Leader>ebpl :tab vsplit ~/.bash_profile_local<CR>
+nnoremap <Leader>ebr :tab vsplit ~/.bashrc<CR>
+nnoremap <Leader>ebrl :tab vsplit ~/.bashrc_local<CR>
 nnoremap <Leader>ea :tab vsplit ~/.config/awesome/rc.lua<CR>
 nnoremap <Leader>et :tab vsplit ~/.config/awesome/defaultCustom.lua<CR>
 nnoremap <Leader>en :tab vsplit ~/Documents/notes.txt<CR>
@@ -100,7 +100,7 @@ nnoremap 0 ^
 nnoremap ^ 0
 nnoremap ` '
 nnoremap ' `
-noremap <Leader>" viw<Esc>a"<Esc>bi"<Esc>
+nnoremap <Leader>" viw<Esc>a"<Esc>bi"<Esc>
 nnoremap <Leader>' viw<Esc>a'<Esc>bi'<Esc>
 " Wrap selected text in double or single quotes
 " `< move to first visual selection character. `> move to last visual
@@ -139,7 +139,7 @@ function! s:check_back_space() abort
 endfunction
 
 " Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+" inoremap <silent><expr> <c-space> coc#refresh()
 " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
 " position. Coc only does snippet and additional edit on confirm.
 " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
@@ -172,7 +172,7 @@ function! s:show_documentation()
 endfunction
 
 " Symbol renaming.
-nmap <S-F6> <Plug>(coc-rename)
+nmap <leader>r  <Plug>(coc-rename)
 
 " Formatting selected code.
 xmap <leader>=  <Plug>(coc-format-selected)
@@ -218,6 +218,8 @@ set relativenumber
 set mouse=a
 " let vim_current_word do the highlighting
 set nohlsearch
+" don't let vim auto complete text
+set completeopt+=menuone,noselect,noinsert
 
 " Create undo directory
 let undoDir = globpath($HOME, '.config/nvim/undodir')
@@ -227,6 +229,11 @@ if !isdirectory(undoDir)
 endif
 set undofile
 let &undodir=undoDir
+
+ " Add (Neo)Vim's native statusline support.
+ " NOTE: Please see `:h coc-status` for integrations with external plugins that
+ " provide custom statusline: lightline.vim, vim-airline.
+ set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
 " ##### User Commands #####
 " --column: Show column number
@@ -239,6 +246,7 @@ let &undodir=undoDir
 " --follow: Follow symlinks
 " --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 " --color: Search color options
+"  not really needed anymore, just use Rg instead from fvf.vim
 command! -bang -nargs=* Grep call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.venv/lib64/*" --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
 command! -nargs=* -complete=shellcmd R vnew | setlocal buftype=nofile bufhidden=hide noswapfile | r !<args>
 command! -nargs=* Src source $MYVIMRC
@@ -285,6 +293,34 @@ let g:vim_current_word#highlight_delay = 100
 " fzf
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
 let g:fzf_preview_window = ['right:60%', 'ctrl-/']
+
+" go
+let g:go_auto_sameids = 1
+let g:go_highlight_array_whitespace_error = 1
+let g:go_highlight_chan_whitespace_error = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_space_tab_error = 1
+let g:go_highlight_trailing_whitespace_error = 0
+let g:go_highlight_operators = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_parameters = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_string_spellcheck = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+let g:go_fmt_experimental = 1
+let g:go_metalinter_autosave=1
+let g:go_metalinter_autosave_enabled=['golint', 'govet']
+
+autocmd BufEnter *.go nmap <Leader>i  <Plug>(go-implements)
+autocmd BufEnter *.go nmap <Leader>t  <Plug>(go-test)
+autocmd BufEnter *.go nmap <Leader>tt <Plug>(go-test-func)
+autocmd BufEnter *.go nmap <Leader>c  <Plug>(go-coverage-toggle)
 
 " Use ripgrep instead https://github.com/BurntSushi/ripgrep
 if executable('rg')
