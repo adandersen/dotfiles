@@ -37,7 +37,34 @@
 
     # list aliases
     la = "!git config -l | grep alias | cut -c 7-"
+	logline = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 [credential]
 	helper = cache
 [merge]
 	conflictStyle = diff3
+[pull]
+	rebase = false
+	ff = only
+[push]
+	default = current
+
+# install delta with brew install git-delta
+[pager]
+    diff = delta
+    log = delta
+    reflog = delta
+    show = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    # side-by-side
+    features = line-numbers decorations
+    whitespace-error-style = 22 reverse
+    syntax-theme = Monokai Extended
+[delta "line-numbers"]
+    line-numbers-left-style = cyan
+    line-numbers-right-style = cyan
+    line-numbers-minus-style = 124
+    line-numbers-plus-style = 28
