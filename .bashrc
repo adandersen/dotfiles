@@ -29,9 +29,11 @@ export EDITOR='vim'
 # --follow: Follow symlinks
 # --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.venv/lib64/*" --glob "!.git/*"' # meant for fuzzy finder in vim
+export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
 
 export PGPASSWORD=canopytax
 export PATH=~/.poetry/bin:/usr/local/Cellar/openssl/1.0.2n/bin/openssl:$PATH
+export PATH=~/go/bin/:$PATH
 export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}";
 export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"; 
 export HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar";
@@ -139,20 +141,18 @@ myhelp () {
 	echo "Other Commands: "
     echo "Ripgrep find files: rf filename [directory(cwd by default)]"
 	echo "Show Dependencies: gradle efile-service:dependencies --configuration compile"
+    echo "duc ui ~ (after duc index ~) to show file space usage"
 }
 
-dcfunc () {
+dc () {
 	export MY_LOCAL_IP=$(myIP)
 	sudo docker-compose "$@"
 }
-
-alias dc=dcfunc
 
 myIP () {
 	ifconfig eth0 | grep -m1 inet | awk '{print $2}'
 	#ifconfig en0 inet | grep inet | awk '{print $2}'
 }
-
 
 dclean () {
 	docker rm -v $(docker ps -a -q -f status=exited); 

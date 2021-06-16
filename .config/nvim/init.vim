@@ -12,20 +12,24 @@ Plug 'vim-scripts/L9'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'bling/vim-airline'
 Plug 'liuchengxu/vim-which-key'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'mhinz/vim-signify'
+" live coding in vim. Best used from the command line (see codi command in .bashrc
+Plug 'metakirby5/codi.vim'
+" highlight current word
 Plug 'dominikduda/vim_current_word'
 " TODO: requires configuring to work in lua, add a lua.vim file in
 " after/syntax
 " could also try Plug 'chrisbra/Colorizer'
-" Plug 'ap/vim-css-color'
+Plug 'ap/vim-css-color'
 Plug 'stefandtw/quickfix-reflector.vim'
 " shows scrolling context window at top of functions/classes
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'fatih/vim-go'
 Plug 'tmhedberg/simpylfold'
 " if you enable vim-sneak, it replaces s with a custom key so rebind it...
 "Plug 'justinmk/vim-sneak'
 Plug 'junegunn/fzf', { 'dir': '~/.local/fzf', 'do': './install --all' } " fuzzy finder
 Plug 'junegunn/fzf.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 "Plug 'ctrlpvim/ctrlp.vim'
 call plug#end()
 
@@ -60,7 +64,6 @@ nnoremap <Leader>ft :GFiles<Enter>
 nnoremap <Leader>ff :Grep 
 nnoremap <Leader>bb :Buffers
 nnoremap <Leader>an :NERDTreeFind<Enter>
-nnoremap <Leader>ab :BuffergatorOpen<Enter>
 nnoremap <Leader>gs :Gstatus<Enter>
 nnoremap <Leader>gc :Git commit -v -q<Enter>
 nnoremap <Leader>ga :Git commit -v -q %<Enter>
@@ -83,7 +86,19 @@ nnoremap zz zz10jzz10k
 nnoremap <Leader>/ :Lines 
 nnoremap <Leader>// :BLines 
 
-inoremap {<CR> {<CR>}<C-o>O
+" what does this do?
+nnoremap <Leader>r <plug>(fzf-maps-n)
+
+" quickfix bindings
+nnoremap <Leader>qn :cnext<CR>
+nnoremap <Leader>qp :cprevious<CR>
+nnoremap <Leader>qc :cclose<CR>
+
+" go file bindings
+autocmd FileType go nmap <Leader>.b <Plug>(go-build)
+autocmd FileType go nmap <Leader>.r <Plug>(go-run)
+
+inoremap {<CR> {<CR>}O
 nnoremap <Leader>ev :tab vsplit $MYVIMRC<CR>
 nnoremap <Leader>ebp :tab vsplit ~/.bash_profile<CR>
 nnoremap <Leader>ebpl :tab vsplit ~/.bash_profile_local<CR>
@@ -114,6 +129,9 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
+
+nnoremap <C-p> :Files<Enter>
+nnoremap <C-e> :Buffers<Enter>
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
@@ -258,7 +276,7 @@ let NERDTreeQuitOnOpen = 1 " exit nerdtree when entering a file
 let NERDTreeAutoDeleteBuffer = 1 " delete buffer when file is deleted in NerdTree
 let NERDTreeMinimalUI = 1
 let NERDTreeHijackNetrw=1
-let g:NERDTreeIndicatorMapCustom = {
+let g:NERDTreeGitStatusIndicatorMapCustom = {
     \ "Modified"  : "✹",
     \ "Staged"    : "✚",
     \ "Untracked" : "✭",
@@ -271,25 +289,16 @@ let g:NERDTreeIndicatorMapCustom = {
     \ "Unknown"   : "?"
     \ }
 
-let g:ctrlp_custom_ignore = {
-  \ 'dir': '\v[\/]\.(git|hg|svn|pub|testing|util|Servers|.metadata|3rdPartySources|build|intellij|pub|scripts|target)$',
-  \ 'file': '\v\.(exe|so|dll|jar|jpg|pdf|sublime-project|sublime-workspace)$',
-  \ }
-let g:ctrlp_max_files = 0
-let g:ctrlp_max_depth = 40
 let g:airline_statusline_ontop=0
 let g:vim_current_word#highlight_delay = 100
 
+" fzf
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
+let g:fzf_preview_window = ['right:60%', 'ctrl-/']
+
 " Use ripgrep instead https://github.com/BurntSushi/ripgrep
 if executable('rg')
-  " Use rg over Grep
   set grepprg=rg\ --vimgrep
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  "let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  "let g:ctrlp_use_caching = 0
 endif
 
 " Color scheme

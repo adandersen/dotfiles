@@ -130,6 +130,10 @@ installUtilities() {
         yellow "Installing ripgrep for neovim fzf searching"
         sudo apt install ripgrep
     fi
+    if [ ! -x "$(command -v duc)" ]; then
+        yellow "Installing duc, a visual disk usage inspection tool"
+        sudo apt install duc
+    fi
 }
 
 installI3() {
@@ -144,6 +148,7 @@ installStarship() {
         sh -c "$(curl -fsSL https://starship.rs/install.sh)"
     fi
 }
+
 
 installApps() {
     installKitty
