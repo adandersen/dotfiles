@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: filetype=sh
 # assumes ubuntu
 mkdir -p ~/.config/dotfiles
 mkdir -p ~/.config/i3
@@ -32,20 +33,20 @@ yellow() {
 }
 
 linkDotfiles() {
-  yellow "Setup dot files, hard linking in $HOME"
-  ln -f $dotfiles_absolute_path/.ideavimrc "$home_dir"/.ideavimrc
-  ln -f $dotfiles_absolute_path/.bash_profile "$home_dir"/.bash_profile
-  ln -f $dotfiles_absolute_path/.bashrc "$home_dir"/.bashrc
-  ln -f $dotfiles_absolute_path/.gitconfig "$home_dir"/.gitconfig
-  ln -f $dotfiles_absolute_path/.tmux.conf "$home_dir"/.tmux.conf
-  ln -f $dotfiles_absolute_path/.inputrc "$home_dir"/.inputrc
-  ln -f $dotfiles_absolute_path/.Xmodmap "$home_dir"/.Xmodmap
-  ln -f $dotfiles_absolute_path/.xmodmaprc "$home_dir"/.xmodmaprc
-  ln -f $dotfiles_absolute_path/.xsession "$home_dir"/.xsession
-  ln -f $dotfiles_absolute_path/i3/config "$home_dir"/.config/i3/config
-	ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
+    yellow "Setup dot files, hard linking in $HOME"
+    ln -f $dotfiles_absolute_path/.ideavimrc "$home_dir"/.ideavimrc
+    ln -f $dotfiles_absolute_path/.bash_profile "$home_dir"/.bash_profile
+    ln -f $dotfiles_absolute_path/.bashrc "$home_dir"/.bashrc
+    ln -f $dotfiles_absolute_path/.gitconfig "$home_dir"/.gitconfig
+    ln -f $dotfiles_absolute_path/.tmux.conf "$home_dir"/.tmux.conf
+    ln -f $dotfiles_absolute_path/.inputrc "$home_dir"/.inputrc
+    ln -f $dotfiles_absolute_path/.Xmodmap "$home_dir"/.Xmodmap
+    ln -f $dotfiles_absolute_path/.xmodmaprc "$home_dir"/.xmodmaprc
+    ln -f $dotfiles_absolute_path/.xsession "$home_dir"/.xsession
+    ln -f $dotfiles_absolute_path/i3/config "$home_dir"/.config/i3/config
+    ln -f $dotfiles_absolute_path/.config/nvim/init.vim ~/.config/nvim/init.vim
 
-  source "$home_dir"/.bash_profile # source in current terminal
+    source "$home_dir"/.bash_profile # source in current terminal
 }
 
 installAwesomeWM() {
