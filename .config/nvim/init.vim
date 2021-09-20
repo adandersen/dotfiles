@@ -85,6 +85,19 @@ nnoremap <Leader>qc :cclose<CR>
 " go file bindings
 autocmd FileType go nmap <Leader>.b <Plug>(go-build)
 autocmd FileType go nmap <Leader>.r <Plug>(go-run)
+autocmd FileType go nmap <Leader>.t <Plug>(go-test)
+autocmd FileType go nmap <Leader>.tt <Plug>(go-test-func)
+autocmd FileType go nmap <Leader>.c <Plug>(go-coverage-toggle)
+" function signature
+autocmd FileType go nmap <Leader>.i <Plug>(go-info)
+" interfaces a type implements
+autocmd FileType go nmap <Leader>.ii <Plug>(go-implements)
+" definition of a given type
+autocmd FileType go nmap <Leader>.d <Plug>(go-describe)
+" see callers of a function
+autocmd FileType go nmap <Leader>.cc <Plug>(go-callers)
+" find all references of a given type/function
+autocmd FileType go nmap <Leader>.cr <Plug>(coc-references)
 
 inoremap {<CR> {<CR>}O
 nnoremap <Leader>ev :tab vsplit $MYVIMRC<CR>
@@ -316,11 +329,12 @@ let g:go_highlight_variable_assignments = 1
 let g:go_fmt_experimental = 1
 let g:go_metalinter_autosave=1
 let g:go_metalinter_autosave_enabled=['golint', 'govet']
+" disable linters as that is taken care of by coc.nvim
+let g:go_diagnostics_enabled = 0
+let g:go_metalinter_enabled = []
 
-autocmd BufEnter *.go nmap <Leader>i  <Plug>(go-implements)
-autocmd BufEnter *.go nmap <Leader>t  <Plug>(go-test)
-autocmd BufEnter *.go nmap <Leader>tt <Plug>(go-test-func)
-autocmd BufEnter *.go nmap <Leader>c  <Plug>(go-coverage-toggle)
+" run go imports on file save
+let g:go_fmt_command = "goimports"
 
 " Use ripgrep instead https://github.com/BurntSushi/ripgrep
 if executable('rg')
