@@ -93,17 +93,24 @@ gbc () {
 	if [ "$1" = '-h' ] || [ "$1" = '--help' ]; then
 		echo "Git Branch Checkout"
 		echo "	gbc branchName commitMessage"
-	elif [ "$#" -ge 1 ]; then
-		for i in $(seq 1 $#);
-		do
-			branch=${@: $i:1}
-			git checkout -b $branch
-			echo 'commit'
-			git commit --verbose
-			echo 'pushing'
-			git push | grep -o 'https://.*$'
-		done
-	fi
+        return
+    fi
+
+    branch=$1
+    shift
+    commit_flags=
+    if [ "$1" = '-n' ]; then
+        commit_flags="$1"
+        shift
+    fi
+    git checkout -b $branch
+    echo 'commit'
+    # the ${a:+"$a"} will set $a to emptiness (instead of the empty string of ''). 
+    # if it uses the empty string then it would be git commit --verbose '' which causes git commit to error. It needs to be nothing at all.
+    git commit --verbose ${commit_flags:+"$commit_flags"}
+    echo 'pushing'
+    # find gitlab url and open in default browser
+    git push 2>&1 | grep https | awk '{print $2}' | xargs xdg-open > /dev/null
 }
 
 gpm () {
@@ -336,4 +343,9 @@ if [ -f ~/.bashrc_local ]; then
     source ~/.bashrc_local
 fi
 
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 eval "$(starship init bash)"
+

@@ -47,14 +47,19 @@ nnoremap <Leader>wl <c-w>l
 nnoremap <Leader>bd :bp\|bd #<Enter>
 nnoremap <Leader>lc :tabnew<Enter>
 nnoremap <Leader>ln :tabn<Enter>
-nnoremap ( :tabn<Enter>
+nnoremap ( :tabp<Enter>
 nnoremap <Leader>lp :tabp<Enter>
-nnoremap ) :tabp<Enter>
+nnoremap ) :tabn<Enter>
 nnoremap <Leader>ft :GFiles<Enter>
 " not real grep, uses ripgrep through fzf
-nnoremap <Leader>ff :Rg 
+nnoremap <Leader>ff viw"+y :Rg<Enter>
+nnoremap <Leader>hh :History<Enter>
+nnoremap <Leader>h: :History:<Enter>
+nnoremap <Leader>h/ :History/<Enter>
+nnoremap <Leader>H :Helptags<Enter>
 nnoremap <Leader>bb :Buffers
 nnoremap <Leader>an :NERDTreeFind<Enter>
+nnoremap <Leader>gg :Commits<Enter>
 nnoremap <Leader>gs :Gstatus<Enter>
 nnoremap <Leader>gc :Git commit -v -q<Enter>
 nnoremap <Leader>ga :Git commit -v -q %<Enter>
