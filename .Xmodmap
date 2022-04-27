@@ -2,6 +2,7 @@
 ! before changing any modifier they must be removed from their modifier map
 remove Control = Control_R
 remove Mod1 = Alt_R
+remove Lock = Escape
 
 ! Map right alt to control
 keycode 105 = Alt_R
@@ -15,6 +16,7 @@ add Mod1 = Alt_R
 add Control = Control_R
 
 ! Caps_Lock is keycode 66
+! Control_R is keycode 105
 ! Alt_R is keycode 108
 ! Escape is keycode 9
 
