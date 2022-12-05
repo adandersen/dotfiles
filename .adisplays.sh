@@ -10,9 +10,9 @@ else
     echo "Setting only main monitor." &&
     xrandr \
         --dpi 208 \
-        --output DP-0 --off \
+        --output DP-2 --off \
         --output DP-1 --off \
-        --output DP-2 --mode 3840x2160 --rate 60 --primary
+        --output DP-0 --mode 3840x1600 --rate 60 --primary
 fi
 
 

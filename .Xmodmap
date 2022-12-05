@@ -1,8 +1,8 @@
 ! this file can only be run once, set a guard to prevent it from being run again
 ! before changing any modifier they must be removed from their modifier map
 remove Control = Control_R
-remove Mod1 = Alt_R
 remove Lock = Escape
+remove Mod1 = Alt_R
 
 ! Map right alt to control
 keycode 105 = Alt_R

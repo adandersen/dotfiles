@@ -40,6 +40,7 @@ exec --no-startup-id nm-applet
 exec kitty
 exec keepassxc
 exec subl
+exec picom
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -229,6 +230,7 @@ mode "$mode_launcher" {
 
 # see https://wiki.archlinux.org/title/I3#Shutdown,_reboot,_lock_screen
 set $Locker i3lock -t -i /home/alan/Pictures/the_devils_pulpit_scotland-wallpaper-3840x1600.jpg && sleep 1
+# set $Locker exec --no-startup-id systemd-run --user -p Environment=DISPLAY=:0 /usr/bin/xautolock -time 5 -locker /usr/bin/i3lock-fancy -detectsleep
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id $Locker, mode "default"
