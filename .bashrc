@@ -56,7 +56,7 @@ alias icat="kitty +kitten icat" # kitty terminal image viewer command
 alias wallpaper="icat --place 300x125@0x0 --scale-up --z-index -1 ~/Documents/Wallpaper/obsidian.jpg"
 alias tmux="TERM=xterm-256color tmux"
 alias ll="ls -l --color=auto -1ahX"
-if [ $(uname) == 'Darwin' ]; then
+if [ $(uname) = 'Darwin' ]; then
     alias ls="ls -GFash"
 else
     alias ls="ls --color=auto -GFash"
